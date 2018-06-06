@@ -2,21 +2,16 @@
 * MODULES
 */
 
-//Load modules
+//Load
 const express = require('express');
 const blogRouter = require('./routes/blog');
-const ConfigManager = require('./services/config-manager');
+const configuration = require('./wallnut.json');
+const ThemeManager = require('./services/theme-manager');
 
-
-//Initialize and configure
-configManager = new ConfigManager();
-
-
+//Configure
+const themeManager = ThemeManager(configuration)
 const app = express();
 require('./util/asyncRender')(app); //Extend Express response objects with the asyncRender function
-
-
-
 
 /*
 * APP
@@ -25,10 +20,8 @@ require('./util/asyncRender')(app); //Extend Express response objects with the a
 //Middleware
 app.set('view engine', 'pug');
 
-
 //Routes
 app.use('/blog', blogRouter);
-
 
 //TODO: Abstract base route into its own file
 app.get('/', async (req, res) => {
@@ -37,7 +30,6 @@ app.get('/', async (req, res) => {
     res.write(html1);
     res.end();
 });
-
 
 //Start the server
 const server = app.listen(process.env.PORT || 3000, () => {

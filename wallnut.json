@@ -1,0 +1,4 @@
+{
+    "themeDirectory": "./themes",
+    "defaultThemeConfig": "./default-theme.config.json"
+}
