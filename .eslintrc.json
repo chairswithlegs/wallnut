@@ -2,6 +2,10 @@
     "extends": "standard",
     "rules": {
         "semi": ["error", "always"],
-    	"indent": ["error", 4]
+        "indent": ["error", 4],
+        "spaced-comment": ["off"],
+        "space-before-function-paren": ["off"],
+        "keyword-spacing": ["off"],
+        "space-infix-ops": ["off"]
     }
 }

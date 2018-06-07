@@ -9,7 +9,7 @@ const configuration = require('./wallnut.json');
 const ThemeManager = require('./services/theme-manager');
 
 //Configure
-const themeManager = ThemeManager(configuration)
+const themeManager = ThemeManager(configuration);
 const app = express();
 require('./util/asyncRender')(app); //Extend Express response objects with the asyncRender function
 
