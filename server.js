@@ -3,14 +3,17 @@
 */
 
 //Load
+
 const express = require('express');
 const blogRouter = require('./routes/blog');
 const configuration = require('./wallnut.json');
 const themeManager = require('./services/theme-manager')(configuration);
 const viewManager = require('./middleware/view-manager');
+const mongoose = require('mongoose');
 
 //Configure
 const app = express();
+const db = mongoose.connect(process.env.CONNECTION_STRING);
 
 /*
 * APP
