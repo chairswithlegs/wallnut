@@ -11,7 +11,6 @@ const viewManager = require('./middleware/view-manager');
 
 //Configure
 const app = express();
-require('./util/asyncRender')(app); //Extend Express response objects with the asyncRender function
 
 /*
 * APP
@@ -22,7 +21,7 @@ app.set('view engine', 'pug');
 app.set('views', __dirname);
 
 //Middleware
-app.use(viewManager(themeManager, configuration));
+app.use(viewManager(app, themeManager, configuration));
 themeManager.activateTheme('dev-theme');
 
 //Routes
