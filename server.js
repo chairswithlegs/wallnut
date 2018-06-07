@@ -2,18 +2,20 @@
 * MODULES
 */
 
-//Load
 require('dotenv').config();
 const express = require('express');
-const blogRouter = require('./routes/blog');
 const configuration = require('./wallnut.json');
-const themeManager = require('./services/theme-manager')(configuration);
 const viewManager = require('./middleware/view-manager');
 const mongoose = require('mongoose');
 
-//Setup
+//Modules with depencies
+const themeManager = require('./services/theme-manager')(configuration);
+const blogRouter = require('./routes/blog')(configuration);
+
+//Additional Setup
 const app = express();
 const db = mongoose.connect(process.env.CONNECTION_STRING);
+
 
 /*
 * APP
