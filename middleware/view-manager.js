@@ -3,10 +3,11 @@ const fs = require('fs');
 module.exports = function(app, themeManager, configuration) {
     //The instance we will be binding to the Express response
     viewManager = {};
-
-    //Private
+    
+    //This will be used for locating view files
     viewMap = {};
 
+    //Adds view locations into the viewMap
     function loadViews(directory) {
         return new Promise((resolve, reject) => {
             fs.readdir((directory), (error, files) => {
@@ -21,20 +22,23 @@ module.exports = function(app, themeManager, configuration) {
         });
     }
 
-    //Public
-    viewManager.asyncRender = async function(name, options={}) {
+    //A wrapper for Express.App.render that uses view mapping and is async/await friendly
+    viewManager.asyncRender = async function(name, options={}, useViewMap=true) {
+        //Using the view maps allows for simple names (e.g. blog)
+        if (useViewMap) {
+            name = viewMap[name];
+        }
+        
         return new Promise((resolve, reject) => {
-            app.render(name, options, (err, html) => {
-                if (err) {
-                    reject(err);
+            app.render(name, options, (error, html) => {
+                if (error) {
+                    reject(error);
                 } else {
                     resolve(html);
                 }
             });
         });
     }
-
-
 
     //Update the viewMap whenever the theme changes
     themeManager.events.on('theme-activated', () => {
