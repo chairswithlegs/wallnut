@@ -2,5 +2,6 @@
     "themeDirectory": "./themes",
     "defaultThemeViews": "./views/default-theme",
     "defaultThemeConfig": "./default-theme.config.json",
-    "baseUrl": "localhost:3000"
+    "baseUrl": "localhost:3000",
+    "modelsDirectory": "./models"
 }
