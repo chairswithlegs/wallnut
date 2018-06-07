@@ -26,6 +26,7 @@ app.set('view engine', 'pug');
 app.set('views', __dirname);
 
 //Middleware
+app.use(express.json());
 app.use(viewManager(app, themeManager, configuration));
 themeManager.activateTheme('dev-theme');
 
