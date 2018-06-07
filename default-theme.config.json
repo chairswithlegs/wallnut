@@ -1,4 +1,5 @@
 {
     "themeName":"",
-    "themeVersion":""
+    "themeVersion":"",
+    "viewDirectory":"."
 }

@@ -6,10 +6,10 @@
 const express = require('express');
 const blogRouter = require('./routes/blog');
 const configuration = require('./wallnut.json');
-const ThemeManager = require('./services/theme-manager');
+const themeManager = require('./services/theme-manager')(configuration);
+const viewManager = require('./middleware/view-manager');
 
 //Configure
-const themeManager = ThemeManager(configuration);
 const app = express();
 require('./util/asyncRender')(app); //Extend Express response objects with the asyncRender function
 
@@ -17,8 +17,13 @@ require('./util/asyncRender')(app); //Extend Express response objects with the a
 * APP
 */
 
-//Middleware
+//Template Engine
 app.set('view engine', 'pug');
+app.set('views', __dirname);
+
+//Middleware
+app.use(viewManager(themeManager, configuration));
+themeManager.activateTheme('dev-theme');
 
 //Routes
 app.use('/blog', blogRouter);

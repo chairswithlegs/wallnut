@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const EventEmitter = require('events');
 
 module.exports = function(configuration) {
     //The instance we will be returning (see below)
@@ -11,6 +12,8 @@ module.exports = function(configuration) {
     let themeConfig = defaultThemeConfig;
 
     //Public
+    themeManager.events = new EventEmitter();
+
     themeManager.getThemeList = function() {
         return new Promise((resolve, reject) => {
             //Get a list of all files in the theme directory
@@ -76,11 +79,16 @@ module.exports = function(configuration) {
             themeManager.activeThemeConfig[setting] = themeConfig[setting];
         }
 
+        themeManager.events.emit('theme-activated');
         return true;
     };
 
     themeManager.getThemeName = function() {
         return themeConfig.themeName;
+    };
+
+    themeManager.getThemeDirectory = function() {
+        return `${themeDirectory}/${themeManager.getThemeName()}`;
     };
 
     themeManager.getSetting = function(setting) {
