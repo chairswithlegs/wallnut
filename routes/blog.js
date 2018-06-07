@@ -36,6 +36,29 @@ module.exports = function(configuration) {
         });
     });
 
+    router.post('/create-post', (req, res) => {
+        if (!req.body.title || !req.body.content || !req.body.author) {
+            res.status(400).send('Error: Post must include a title, content, and author.');
+        } else {
+            //Populate the new post with the request values
+            let post = {
+                title: req.body.title,
+                content: req.body.content,
+                author: req.body.author
+            }
+            if (req.body.date) { post.date = req.body.date } //Optionally add date
+
+            //Attempt to create the post in the database
+            Post.create(post, (error, post) => {
+                if (error) {
+                    res.status(500).send('Error: Failed to create post.');
+                } else {
+                    res.json(post);
+                }
+            });
+        }
+    });
+
     return router;
 }
 
