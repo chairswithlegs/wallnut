@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-module.exports = function(app, themeManager, configuration) {
+module.exports = async function(app, themeManager, configuration) {
     //The instance we will be binding to the Express response (see below)
     viewManager = {};
     
@@ -11,6 +11,8 @@ module.exports = function(app, themeManager, configuration) {
     function loadViews(directory) {
         return new Promise((resolve, reject) => {
             fs.readdir((directory), (error, files) => {
+                if (error) { reject(error) }
+                
                 files.forEach((file) => {
                     splitFile = file.split('.');
     
@@ -18,6 +20,8 @@ module.exports = function(app, themeManager, configuration) {
                         viewMap[splitFile[0]] = `${directory}/${file}`;
                     }
                 });
+
+                resolve();
             });
         });
     }
@@ -29,7 +33,7 @@ module.exports = function(app, themeManager, configuration) {
         if (useViewMap) {
             name = viewMap[name];
         }
-        
+
         return new Promise((resolve, reject) => {
             app.render(name, options, (error, html) => {
                 if (error) {
@@ -41,18 +45,20 @@ module.exports = function(app, themeManager, configuration) {
         });
     }
 
+
+    //Setup
     //Update the viewMap whenever the theme changes
-    themeManager.events.on('theme-activated', () => {
+    themeManager.events.on('theme-activated', async () => {
         //Reset the view map
         viewMap = {};
-        loadViews(configuration.defaultThemeViews);
+        await loadViews(configuration.coreViews);
 
         //Update the view map with the new theme's views
-        loadViews(`${themeManager.getThemeDirectory()}`);
+        loadViews(themeManager.getThemeDirectory());
     });
 
     //Setup and return the middleware function
-    loadViews(configuration.defaultThemeViews);
+    await loadViews(configuration.coreViews);
     return function(req, res, next) {
         res.view = viewManager;
         next();

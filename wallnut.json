@@ -1,6 +1,6 @@
 {
     "themeDirectory": "./themes",
-    "defaultThemeViews": "./views/default-theme",
+    "coreViews": "./views",
     "defaultThemeConfig": "./default-theme.config.json",
     "baseUrl": "localhost:3000",
     "modelsDirectory": "./models"
