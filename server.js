@@ -39,7 +39,7 @@
     
     //TODO: Abstract base route into its own file
     app.get('/', async (req, res) => {
-        let html1 = await res.view.asyncRender('post', {postName: 'This is the title', postBody: 'Body here'});
+        let html1 = await res.view.renderAsync('post', {postName: 'This is the title', postBody: 'Body here'});
         res.header({ 'Content-Type': 'text/html' });
         res.write(html1);
         res.end();

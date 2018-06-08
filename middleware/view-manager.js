@@ -28,7 +28,7 @@ module.exports = async function(app, themeManager, configuration) {
 
     //Public
     //A wrapper for Express.App.render that uses view mapping and is async/await friendly
-    viewManager.asyncRender = async function(name, options={}, useViewMap=true) {
+    viewManager.renderAsync = async function(name, options={}, useViewMap=true) {
         //Using the view maps allows for simple names (e.g. blog)
         if (useViewMap) {
             name = viewMap[name];

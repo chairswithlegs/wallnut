@@ -13,10 +13,10 @@ module.exports = function(configuration) {
     
     //Public
     router.get('/', async(req, res) => {
-        //const blogContent = await res.asyncRender('blog');
-        const blogContent = await res.view.asyncRender('blog');
+        //const blogContent = await res.renderAsync('blog');
+        const blogContent = await res.view.renderAsync('blog');
     
-        const html = await res.view.asyncRender('./views/layout', { content: blogContent }, false);
+        const html = await res.view.renderAsync('./views/layout', { content: blogContent }, false);
     
         res.setHeader('Content-Type', 'text/html');
         res.write(html);
@@ -30,7 +30,7 @@ module.exports = function(configuration) {
             } else if (!post) {
                 res.status(404).send('Post not found.');
             } else {
-                postHtml = await res.asyncRender('post', { post: post });
+                postHtml = await res.view.renderAsync('post', { post: post });
                 res.send(postHtml);
             }
         });
