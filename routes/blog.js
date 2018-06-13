@@ -3,7 +3,7 @@
 const express = require('express');
 const path = require('path');
 
-module.exports = function(configuration) {
+module.exports = function(configuration, viewManager) {
     //The instance we will be returning (see below)
     const router = express.Router();
 
@@ -23,8 +23,8 @@ module.exports = function(configuration) {
                     }
                 });
             });
-
-            const html = await res.view.renderPageAsync('blog', { posts: posts });
+            
+            const html = await viewManager.renderPageAsync('blog', { posts: null });
             res.header('Content-Type', 'text/html').send(html);
 
         } catch(error) {
@@ -40,7 +40,7 @@ module.exports = function(configuration) {
             } else if (!post) {
                 res.status(404).send('Post not found.');
             } else {
-                const html = await res.view.renderPageAsync('post', { post: post });
+                const html = await viewManager.renderPageAsync('post', { post: post });
                 res.header('Content-Type', 'text/html').send(html);
             }
         });
