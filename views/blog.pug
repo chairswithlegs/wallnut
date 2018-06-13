@@ -1,3 +1,16 @@
-h1 This is the blog.
-p This is the blog text.
+p Start of Blog
+
+
+
+if posts
+    each post in posts
+        a(href=`blog/${post._id}`)
+            h1= post.title
+        h3= post.author
+        p= post.content
+else
+    p No posts to display
     
+
+
+p End of Blog

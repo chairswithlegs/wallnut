@@ -1,2 +1,16 @@
-h1 THIS IS THE THEME TEMPLATE
-p Body blog text here
+p Start of THEME Blog
+
+
+
+if posts
+    each post in posts
+        a(href=`blog/${post._id}`)
+            h1= post.title
+        h3= post.author
+        p= post.content
+else
+    p No posts to display
+    
+
+
+p End of THEME Blog
