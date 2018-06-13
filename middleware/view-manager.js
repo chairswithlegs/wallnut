@@ -47,15 +47,17 @@ module.exports = async function(app, themeManager, configuration) {
 
     //Convenience function for that automatically adds the header, footer, and layout templates
     viewManager.renderPageAsync = async function(template, options={}, useViewMap=true) {
-        headerHtml = await viewManager.renderAsync('header');
-        footerHtml = await viewManager.renderAsync('footer');
-        contentHtml = await viewManager.renderAsync(template, options, useViewMap);
+        layoutOptions = {
+            header: await viewManager.renderAsync('header'),
+            footer: await viewManager.renderAsync('footer'),
+            content: await viewManager.renderAsync(template, options, useViewMap)
+        }
 
-        return viewManager.renderAsync('layout', {
-            header: headerHtml,
-            footer: footerHtml,
-            content: contentHtml,
-        });
+        if (viewMap['theme-scripts']) {
+            layoutOptions.themeScripts = await viewManager.renderAsync('theme-scripts');
+        }
+
+        return viewManager.renderAsync('layout', layoutOptions);
     }
 
     //Setup
