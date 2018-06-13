@@ -28,14 +28,14 @@ module.exports = async function(app, themeManager, configuration) {
 
     //Public
     //A wrapper for Express.App.render that uses view mapping and is async/await friendly
-    viewManager.renderAsync = async function(name, options={}, useViewMap=true) {
+    viewManager.renderAsync = async function(template, options={}, useViewMap=true) {
         //Using the view maps allows for simple names (e.g. blog)
         if (useViewMap) {
-            name = viewMap[name];
+            template = viewMap[template];
         }
 
         return new Promise((resolve, reject) => {
-            app.render(name, options, (error, html) => {
+            app.render(template, options, (error, html) => {
                 if (error) {
                     reject(error);
                 } else {
@@ -45,6 +45,18 @@ module.exports = async function(app, themeManager, configuration) {
         });
     }
 
+    //Convenience function for that automatically adds the header, footer, and layout templates
+    viewManager.renderPageAsync = async function(template, options={}, useViewMap=true) {
+        headerHtml = await viewManager.renderAsync('header');
+        footerHtml = await viewManager.renderAsync('footer');
+        contentHtml = await viewManager.renderAsync(template, options, useViewMap);
+
+        return viewManager.renderAsync('layout', {
+            header: headerHtml,
+            footer: footerHtml,
+            content: contentHtml,
+        });
+    }
 
     //Setup
     //Update the viewMap whenever the theme changes
