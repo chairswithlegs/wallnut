@@ -13,14 +13,24 @@ module.exports = function(configuration) {
     
     //Public
     router.get('/', async(req, res) => {
-        //const blogContent = await res.renderAsync('blog');
-        const blogContent = await res.view.renderAsync('blog');
-    
-        const html = await res.view.renderAsync('./views/layout', { content: blogContent }, false);
-    
-        res.setHeader('Content-Type', 'text/html');
-        res.write(html);
-        res.end();
+        try {
+            const posts = await new Promise((resolve, reject) => {
+                Post.find({}, (error, posts) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(posts);
+                    }
+                });
+            });
+
+            const html = await res.view.renderPageAsync('blog', { posts: posts });
+            res.header('Content-Type', 'text/html').send(html);
+
+        } catch(error) {
+            console.log(error);
+            res.status(500).send('Server error.');
+        }
     });
     
     router.get('/:postId', (req, res) => {
@@ -30,8 +40,8 @@ module.exports = function(configuration) {
             } else if (!post) {
                 res.status(404).send('Post not found.');
             } else {
-                postHtml = await res.view.renderAsync('post', { post: post });
-                res.send(postHtml);
+                const html = await res.view.renderPageAsync('post', { post: post });
+                res.header('Content-Type', 'text/html').send(html);
             }
         });
     });
