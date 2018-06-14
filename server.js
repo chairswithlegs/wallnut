@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const themeManager = require('./services/theme-manager');
 const viewManager = require('./services/view-manager');
 const blogRouter = require('./routes/blog');
+const adminRouter = require('./routes/admin');
 
 //Create the app and configure
 const app = express();
@@ -30,9 +31,10 @@ mongoose.connect(process.env.CONNECTION_STRING).then(() => {
 function configureServices(app) {
     const serviceContainer = {}
     
-    serviceContainer.themeManager = require('./services/theme-manager')(configuration);
-    serviceContainer.viewManager = require('./services/view-manager')(app, serviceContainer.themeManager, configuration);
-    serviceContainer.blogRouter = require('./routes/blog')(configuration, serviceContainer.viewManager);
+    serviceContainer.themeManager = themeManager(configuration);
+    serviceContainer.viewManager = viewManager(app, serviceContainer.themeManager, configuration);
+    serviceContainer.blogRouter = blogRouter(configuration, serviceContainer.viewManager);
+    serviceContainer.adminRouter = adminRouter(configuration, serviceContainer.viewManager);
     
     return serviceContainer;
 }
@@ -43,4 +45,5 @@ function configureApp(serviceContainer) {
     app.set('views', __dirname);
     app.use(express.json());
     app.use('/blog', serviceContainer.blogRouter);
+    app.use('/admin', serviceContainer.adminRouter);
 }
