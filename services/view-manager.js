@@ -60,6 +60,21 @@ module.exports = function(app, themeManager, configuration) {
         return viewManager.renderAsync('layout', layoutOptions);
     }
 
+        //Convenience function for that automatically adds the admin layout template
+        viewManager.renderAdminPageAsync = async function(template, options={}, useViewMap=true) {
+            layoutOptions = {
+                header: await viewManager.renderAsync('admin-header'),
+                footer: await viewManager.renderAsync('admin-footer'),
+                content: await viewManager.renderAsync(template, options, useViewMap)
+            }
+    
+            if (viewMap['theme-scripts']) {
+                layoutOptions.themeScripts = await viewManager.renderAsync('theme-scripts');
+            }
+    
+            return viewManager.renderAsync('layout', layoutOptions);
+        }
+
     //Update the viewMap whenever the theme changes
     themeManager.events.on('theme-activated', async () => {
         //Reset the view map

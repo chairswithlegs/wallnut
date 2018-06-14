@@ -11,10 +11,10 @@ html
             != themeScripts
 
     body
-        .container
+        .container-fluid.p-0
             header!= header
                 
-            div!= content
+            .container.pt-5.pb-5!= content
 
             footer!= footer
 
