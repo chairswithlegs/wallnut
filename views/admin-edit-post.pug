@@ -1,0 +1,17 @@
+form
+    .form-group
+        label(for='form-title') Title
+        input.form-control(type='text', id='form-title', value=post.title)
+
+    .form-group
+        label(for='form-content') Content
+        textarea.form-control(rows='8', id='form-content')= post.content
+
+    input(type='hidden', id='form-id', value=post._id)
+
+    button.btn.btn-primary(type='button', id='form-submit-button') Update
+    span.d-none.pl-2(id='success-alert') Post successfully updated.
+    span.d-none.text-danger.pl-2(id='error-alert') Uh-oh, something went wrong.
+
+script
+    include admin-edit-post.js

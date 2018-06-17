@@ -37,12 +37,31 @@ module.exports = function(configuration, viewManager) {
         }
     });
 
-    router.get('/posts/:id', (req, res) => {
-        //Display the post for editing.
+    router.get('/posts/:id', async(req, res) => {
+        try {
+            const post = await new Promise((resolve, reject) => {
+                Post.findById(req.params.id, (error, post) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(post);
+                    }
+                });
+            });
+
+            html = await viewManager.renderAdminPageAsync('admin-edit-post', { post: post });
+            res.header('Content-Type', 'text/html').send(html);
+
+        } catch(error) {
+            console.log(error);
+            res.status(500).send('Server error.');
+        }
     });
 
     router.put('/posts/:id', (req, res) => {
-        //Modify the post
+        console.log(req.body);
+        res.end();
+        //res.send(res.body);
     });
 
     router.post('/posts', (req, res) => {
