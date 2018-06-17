@@ -1,9 +1,9 @@
 if posts
     ul.list-group
         each post in posts
-            li.list-group-item
-                a.post.title
+            li.list-group-item.list-group-item-action
+                a(href=`posts/${post._id}`)= post.title
 else
     p You haven't created any posts.
 
-button.btn.btn-primary(type='button') Create Post
+button.mt-5.btn.btn-primary(type='button') New Post

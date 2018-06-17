@@ -1,2 +1,6 @@
-h2 postName
-p postBody
+h2= post.title
+
+if post.author
+    h3= post.author
+
+p!= post.content
