@@ -24,7 +24,7 @@ module.exports = function(configuration, viewManager) {
                 });
             });
             
-            const html = await viewManager.renderPageAsync('blog', { posts: null });
+            const html = await viewManager.renderPageAsync('blog', { posts: posts });
             res.header('Content-Type', 'text/html').send(html);
 
         } catch(error) {
@@ -33,8 +33,8 @@ module.exports = function(configuration, viewManager) {
         }
     });
     
-    router.get('/:postId', (req, res) => {
-        Post.findById(req.params.postId, async (error, post) => {
+    router.get('/:id', (req, res) => {
+        Post.findById(req.params.id, async (error, post) => {
             if (error) {
                 res.status(500).send('Server error.');
             } else if (!post) {
@@ -46,21 +46,21 @@ module.exports = function(configuration, viewManager) {
         });
     });
 
-    router.post('/create-post', (req, res) => {
-        if (!req.body.title || !req.body.content || !req.body.author) {
-            res.status(400).send('Error: Post must include a title, content, and author.');
+    router.post('/', (req, res) => {
+        if (!req.body.title || !req.body.content ) {
+            res.status(400).send('Error: Post must include a title and content.');
         } else {
             //Populate the new post with the request values
             let post = {
                 title: req.body.title,
                 content: req.body.content,
-                author: req.body.author
             }
             if (req.body.date) { post.date = req.body.date } //Optionally add date
 
             //Attempt to create the post in the database
             Post.create(post, (error, post) => {
                 if (error) {
+                    console.log(error);
                     res.status(500).send('Error: Failed to create post.');
                 } else {
                     res.json(post);
