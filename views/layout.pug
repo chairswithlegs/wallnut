@@ -11,6 +11,8 @@ html
         if themeScripts
             != themeScripts
 
+        title= getSiteSetting('Site Title')
+
     body
         .container-fluid.p-0
             header!= header
