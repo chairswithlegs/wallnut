@@ -77,7 +77,7 @@ module.exports = function(configuration, viewManager) {
                     } else {
                         post.title = req.body.title;
                         post.content = req.body.content;
-                        post.save((error , updatedPost) => {
+                        post.save((error, updatedPost) => {
                             if (error) {
                                 res.status(500).send('Server error.');
                             } else {
