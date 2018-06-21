@@ -3,5 +3,8 @@
     "coreViews": "./views",
     "defaultThemeConfig": "./default-theme.config.json",
     "baseUrl": "localhost:3000",
-    "modelsDirectory": "./models"
+    "modelsDirectory": "./models",
+    "seedSettings": {
+        "Site Title": "Your Site"
+    }
 }
