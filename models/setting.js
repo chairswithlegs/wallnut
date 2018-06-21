@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const settingsSchema = mongoose.Schema({
+const settingSchema = mongoose.Schema({
     key: { type: String, required: true, unique: true },
     value: Object
 });
