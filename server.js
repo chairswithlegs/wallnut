@@ -6,7 +6,7 @@ require('dotenv').config();
 const express = require('express');
 const configuration = require('./wallnut.json');
 const mongoose = require('mongoose');
-const themeManager = require('./services/theme-manager');
+const ThemeManager = require('./services/theme-manager');
 const viewManager = require('./services/view-manager');
 const settingsManager = require('./services/settings-manager');
 const blogRouter = require('./routes/blog');
@@ -24,7 +24,7 @@ const adminRouter = require('./routes/admin');
         await setSeedSettings(serviceContainer.settingsManager);
         
         //FOR TESTING PURPOSES ONLY
-        await serviceContainer.themeManager.activateTheme('dev-theme');
+        await serviceContainer.themeManager.setActiveTheme('dev-theme');
         
         const server = app.listen(process.env.PORT || 3000, () => {
             console.log(`Server listening on port ${server.address().port}`);
@@ -38,8 +38,9 @@ const adminRouter = require('./routes/admin');
 //Creates services and manages dependencies
 async function configureServices(app) {
     const serviceContainer = {}
-    
-    serviceContainer.themeManager = themeManager(configuration);
+
+    serviceContainer.themeManager = new ThemeManager(configuration.themesDirectory);
+
     serviceContainer.settingsManager = await settingsManager(configuration, serviceContainer.themeManager);
     serviceContainer.viewManager = await viewManager(app, serviceContainer.themeManager, serviceContainer.settingsManager, configuration);
     serviceContainer.blogRouter = blogRouter(configuration, serviceContainer.viewManager);

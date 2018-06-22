@@ -1,7 +1,6 @@
 {
-    "themeDirectory": "./themes",
+    "themesDirectory": "./themes",
     "coreViews": "./views",
-    "defaultThemeConfig": "./default-theme.config.json",
     "baseUrl": "localhost:3000",
     "modelsDirectory": "./models",
     "seedSettings": {

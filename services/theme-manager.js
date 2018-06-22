@@ -1,70 +1,34 @@
+/*
+* This file exports the ThemeManager constructor
+* The theme manager can be used for managing theme state and getting information about available themes
+*/
+
 const fs = require('fs');
-const path = require('path');
 const EventEmitter = require('events');
 
-module.exports = function(configuration) {
-    //The instance we will be returning (see below)
-    const themeManager = {};
+//Represents a "theme" and couples a theme's name to its configuration
+function ThemeSnapshot(name, config={}) {
+    this.name = name;
+    this.config = config;
 
-    //Private
-    const defaultThemeConfig = require(path.resolve(configuration.defaultThemeConfig));
-    const themeDirectory = configuration.themeDirectory;
-    let themeConfig = defaultThemeConfig;
+    Object.freeze(this);
+}
 
-    //Public
-    themeManager.events = new EventEmitter();
+function ThemeManager(themesDirectory) {
+    let activeTheme;
 
-    themeManager.getThemeList = function() {
-        return new Promise((resolve, reject) => {
-            //Get a list of all files in the theme directory
-            fs.readdir(themeDirectory, (error, files) => {
-                if (error) { reject(error); }
+    this.themesDirectory = themesDirectory;
 
-                const themes = [];
-                let fileCounter = files.length;
-
-                //Iterate through each file, and push any directory names to the theme list
-                files.forEach((file) => {
-                    fs.stat(`${themeDirectory}/${file}`, (error, stats) => {
-                        fileCounter--;
-
-                        if (error || !stats.isDirectory()) {
-                            return;
-                        } else {
-                            themes.push(file);
-                        }
-
-                        //If this is the final file to iterate through, resolve the promise
-                        if (fileCounter === 0) {
-                            resolve(themes);
-                        }
-                    });
-                });
-            });
-        });
-    };
-
-    themeManager.themeExists = function(themeName) {
-        return new Promise((resolve, reject) => {
-            fs.stat(`${themeDirectory}/${themeName}`, (error, stats) => {
-                if (error || !stats.isDirectory()) {
-                    resolve(false);
-                } else {
-                    resolve(true);
-                }
-            });
-        });
-    };
-
-    //Set the theme located in ./themes/<themeName> as the active theme
-    themeManager.activateTheme = async function(themeName) {
+    this.setActiveTheme = async function(themeName) {
         //Ensure theme exists
-        const themeExists = await this.themeExists(themeName);
-        if(themeExists === false) { throw new Error('Theme does not exist.'); }
-
-        //Next, load the new theme config
+        let exists = await this.themeExists(themeName);
+        if (exists === false) { 
+            throw new Error('Theme does not exist.'); 
+        }
+        
+        //Load the new theme config
         themeConfig = await new Promise((resolve, reject) => {
-            fs.readFile(`${themeDirectory}/${themeName}/config.json`, (error, data) => {
+            fs.readFile(`${this.themesDirectory}/${themeName}/config.json`, (error, data) => {
                 if (error) {
                     reject(error);
                 } else {
@@ -73,32 +37,71 @@ module.exports = function(configuration) {
             });
         });
 
-        //Reset the config to the base settings and overwrite as needed with the new theme settings
-        themeManager.activeThemeConfig = defaultThemeConfig;
-        for(let setting in themeConfig) {
-            themeManager.activeThemeConfig[setting] = themeConfig[setting];
-        }
+        //Update the internal theme ref and update subscribers
+        activeTheme = new ThemeSnapshot(themeName, themeConfig);
+        this.emit('theme-activated');
+    }
 
-        themeManager.events.emit('theme-activated');
-        return true;
-    };
+    this.getActiveTheme = function() {
+        return activeTheme;
+    }
+}
 
-    themeManager.getThemeName = function() {
-        return themeConfig.themeName;
-    };
+//Inherit from EventEmitter without risking modification of the EventEmitter prototype
+ThemeManager.prototype.__proto__ = EventEmitter.prototype;
 
-    themeManager.getThemeDirectory = function() {
-        return `${themeDirectory}/${themeManager.getThemeName()}`;
-    };
-
-    themeManager.getSetting = function(setting) {
-        //Return copies of objects, not actual references (to prevent accidental modification)
-        if (typeof themeConfig[setting] === 'object') {
-            return Object.assign({}, themeConfig[setting]);
-        }
-
-        return themeConfig[setting];
-    };
-
-    return themeManager;
+//Lists the names of the available themes (i.e. directory names in this.themesDirectory)
+ThemeManager.prototype.getThemeList = function() {
+    return new Promise((resolve, reject) => {
+        //Get a list of all files in the theme directory
+        fs.readdir(this.themesDirectory, (error, files) => {
+            if (error) { reject(error); }
+            
+            const themes = [];
+            let fileCounter = files.length;
+            
+            //Iterate through each file, and push any directory names to the theme list
+            files.forEach((file) => {
+                fs.stat(`${this.themesDirectory}/${file}`, (error, stats) => {
+                    fileCounter--;
+                    
+                    if (error || !stats.isDirectory()) {
+                        return;
+                    } else {
+                        themes.push(file);
+                    }
+                    
+                    //If this is the final file to iterate through, resolve the promise
+                    if (fileCounter === 0) {
+                        resolve(themes);
+                    }
+                });
+            });
+        });
+    });
 };
+
+//Returns a boolean promise indicating if a theme exists
+ThemeManager.prototype.themeExists = function(themeName) {
+    return new Promise((resolve, reject) => {
+        fs.stat(`${this.themesDirectory}/${themeName}`, (error, stats) => {
+            if (error || !stats.isDirectory()) {
+                resolve(false);
+            } else {
+                resolve(true);
+            }
+        });
+    });
+};
+
+//Return the path of the current theme
+ThemeManager.prototype.getActiveThemeDirectory = function() {
+    return `${this.themesDirectory}/${this.getActiveTheme().name}`;
+};
+
+//Convience function for getting individual settings from the active theme
+ThemeManager.prototype.getActiveThemeSetting = function(setting) {
+    return this.getActiveTheme().config[setting];
+};
+
+module.exports = ThemeManager;

@@ -82,15 +82,15 @@ module.exports = async function(app, themeManager, settingsManager, configuratio
         
         return viewManager.renderAsync('layout', layoutOptions);
     }
-    
+
     //Update the viewMap whenever the theme changes
-    themeManager.events.on('theme-activated', async () => {
+    themeManager.on('theme-activated', async () => {
         //Reset the view map
         viewMap = {};
         await loadViews(configuration.coreViews);
         
         //Update the view map with the new theme's views
-        loadViews(themeManager.getThemeDirectory());
+        loadViews(themeManager.getActiveThemeDirectory());
     });
     
     //Setup and return the service
