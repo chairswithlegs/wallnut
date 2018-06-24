@@ -9,8 +9,15 @@ module.exports = function(viewManager) {
     //The instance we will be returning (see below)
     const router = express.Router();
 
+    //Get Methods
     router.get('/', async(req, res) => {
-        res.send('Welcome Page Here');
+        const html = await viewManager.renderAdminPageAsync('admin-dashboard');
+        res.header('Content-Type', 'text/html').send(html);
+    });
+
+    router.get('/login', async(req, res) => {
+        const html = await viewManager.renderPageAsync('admin-login');
+        res.header('Content-Type', 'text/html').send(html);
     });
     
     router.get('/posts', async(req, res) => {
@@ -25,7 +32,7 @@ module.exports = function(viewManager) {
                 });
             });
             
-            html = await viewManager.renderAdminPageAsync('admin-posts', { posts: posts });
+            const html = await viewManager.renderAdminPageAsync('admin-posts', { posts: posts });
             res.header('Content-Type', 'text/html').send(html);
             
         } catch(error) {
@@ -35,7 +42,7 @@ module.exports = function(viewManager) {
     });
 
     router.get('/posts/create', async(req, res) => {
-        html = await viewManager.renderAdminPageAsync('admin-edit-post');
+        const html = await viewManager.renderAdminPageAsync('admin-edit-post');
         res.header('Content-Type', 'text/html').send(html);
     });
     
@@ -51,7 +58,7 @@ module.exports = function(viewManager) {
                 });
             });
             
-            html = await viewManager.renderAdminPageAsync('admin-edit-post', { post: post });
+            const html = await viewManager.renderAdminPageAsync('admin-edit-post', { post: post });
             res.header('Content-Type', 'text/html').send(html);
             
         } catch(error) {
@@ -59,7 +66,42 @@ module.exports = function(viewManager) {
             res.status(500).send('Server error.');
         }
     });
+
+    router.get('/settings', async(req, res) => {
+        const html = await viewManager.renderAdminPageAsync('admin-settings');
+        res.header('Content-Type', 'text/html').send(html);
+    });
     
+    //Post Methods
+    router.post('/posts', (req, res) => {
+        try {
+            if (!req.body.title || !req.body.content) {
+                res.status(400).send('Post must include a title and content.');
+            } else {
+                //Populate the new post with the request values
+                let post = {
+                    title: req.body.title,
+                    content: req.body.content,
+                }
+                if (req.body.date) { post.date = req.body.date } //Optionally add date
+                
+                //Attempt to create the post in the database
+                Post.create(post, (error, post) => {
+                    if (error) {
+                        console.log(error);
+                        res.status(500).send('Server error.');
+                    } else {
+                        res.json(post);
+                    }
+                });
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).send('Server error.');
+        }
+    });
+    
+    //Put Methods
     router.put('/posts/:id', (req, res) => {
         try {
             if (!req.body.title || !req.body.content || !req.body.id) {
@@ -89,39 +131,7 @@ module.exports = function(viewManager) {
             res.status(500).send('Server error.');
         }
     });
-    
-    router.post('/posts', (req, res) => {
-        try {
-            if (!req.body.title || !req.body.content) {
-                res.status(400).send('Post must include a title and content.');
-            } else {
-                //Populate the new post with the request values
-                let post = {
-                    title: req.body.title,
-                    content: req.body.content,
-                }
-                if (req.body.date) { post.date = req.body.date } //Optionally add date
-                
-                //Attempt to create the post in the database
-                Post.create(post, (error, post) => {
-                    if (error) {
-                        console.log(error);
-                        res.status(500).send('Server error.');
-                    } else {
-                        res.json(post);
-                    }
-                });
-            }
-        } catch (error) {
-            console.log(error);
-            res.status(500).send('Server error.');
-        }
-    });
-    
-    router.get('/settings', (req, res) => {
-        //Display the site settings
-    });
-    
+
     router.put('/settings', (req, res) => {
         //Update the site settings
     });
