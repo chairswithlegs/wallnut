@@ -1,71 +1,71 @@
 const path = require('path');
 
-module.exports = async function(configuration, themeManager) {
-    settingsManager = {};
-
-    //Private
-    Setting = require(`${path.resolve(configuration.modelsDirectory)}/setting.js`);
-    siteSettingsCache = {};
+function SettingsManager(settingModel, themeManager) {
+    let siteSettingsCache;
     
-    function loadSiteSettings() {
+    this.Setting = settingModel;
+
+    this.getSiteSetting = function(setting) {
+        return siteSettingsCache[setting]
+    }
+
+    this.loadSiteSettings = function() {
         return new Promise((resolve, reject) => {
-            Setting.find({}, (error, settings) => {
+            this.Setting.find({}, (error, settings) => {
                 if (error) {
                     reject(error);
                 } else {
+                    siteSettingsCache = {};
+
                     settings.forEach((setting) => {
                         siteSettingsCache[setting.key] = setting.value;
                     });
+
+                    Object.freeze(siteSettingsCache);
 
                     resolve(siteSettingsCache);
                 }
             });
         });
     }
+}
 
-    //Public
-    settingsManager.getActiveThemeSetting = function(setting) {
-        return themeManager.getActiveThemeSetting(setting);
-    }
-    
-    settingsManager.getSiteSetting = function(setting) {
-        //Return copies of objects, not actual references (to prevent accidental modification)
-        if (typeof siteSettingsCache[setting] === 'object') {
-            return Object.assign({}, siteSettingsCache[setting]);
-        }
-        
-        return siteSettingsCache[setting]
-    }
-    
-    settingsManager.setSiteSetting = function(key, value) {
-        return new Promise((resolve, reject) => {
-            Setting.findOne({ key: key }, (error, setting) => {
-                if (error) {
-                    reject(error);
-                } else if (!setting) {
-                    Setting.create({ key: key, value: value }, (error, setting) => {
-                        if (error) {
-                            reject(error);
-                        } else {
-                            loadSiteSettings();
-                            resolve(setting);
-                        }
-                    });
-                } else {
-                    setting.value = value;
-                    setting.save((error, updatedSetting) => {
-                        if (error) {
-                            reject(error);
-                        } else {
-                            loadSiteSettings();
-                            resolve(updatedSetting);
-                        }
-                    });
-                }
-            });
+SettingsManager.prototype.getActiveThemeSetting = function(setting) {
+    return this.themeManager.getActiveThemeSetting(setting);
+}
+
+SettingsManager.prototype.setSiteSetting = function(key, value) {
+    return new Promise((resolve, reject) => {
+        this.Setting.findOne({ key: key }, (error, setting) => {
+            if (error) {
+                reject(error);
+            } else if (!setting) {
+                Setting.create({ key: key, value: value }, (error, setting) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        this.loadSiteSettings();
+                        resolve(setting);
+                    }
+                });
+            } else {
+                setting.value = value;
+                setting.save((error, updatedSetting) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        this.loadSiteSettings();
+                        resolve(updatedSetting);
+                    }
+                });
+            }
         });
-    }
+    });
+}
 
-    await loadSiteSettings();
+module.exports = async function(configuration, themeManager) {
+    Setting = require(`${path.resolve(configuration.modelsDirectory)}/setting.js`);
+    settingsManager = new SettingsManager(Setting, themeManager);
+    await settingsManager.loadSiteSettings();
     return settingsManager;
 }
