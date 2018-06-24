@@ -9,6 +9,7 @@ module.exports = function(viewManager) {
     //The instance we will be returning (see below)
     const router = express.Router();
 
+    //Get Methods
     router.get('/', async(req, res) => {
         try {
             const posts = await new Promise((resolve, reject) => {
@@ -43,6 +44,7 @@ module.exports = function(viewManager) {
         });
     });
 
+    //Post Methods
     router.post('/', (req, res) => {
         if (!req.body.title || !req.body.content ) {
             res.status(400).send('Error: Post must include a title and content.');
