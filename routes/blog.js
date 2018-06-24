@@ -2,16 +2,13 @@
 
 const express = require('express');
 const path = require('path');
+const User = require('../models/user');
+const Post = require('../models/post');
 
-module.exports = function(configuration, viewManager) {
+module.exports = function(viewManager) {
     //The instance we will be returning (see below)
     const router = express.Router();
 
-    //Private
-    const User = require(path.resolve(`${configuration.modelsDirectory}/user`));
-    const Post = require(path.resolve(`${configuration.modelsDirectory}/post`));
-    
-    //Public
     router.get('/', async(req, res) => {
         try {
             const posts = await new Promise((resolve, reject) => {

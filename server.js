@@ -8,10 +8,8 @@ const configuration = require('./wallnut.json');
 const mongoose = require('mongoose');
 const ThemeManager = require('./services/theme-manager');
 const viewRendererFactory = require('./services/view-renderer');
-const settingsManager = require('./services/settings-manager');
-const blogRouter = require('./routes/blog');
-const adminRouter = require('./routes/admin');
-
+const settingsManagerFactory = require('./services/settings-manager');
+const rootRouterFactory = require('./routes/root');
 
 //Create the database connection, Express app, and server
 (async() => { //Simple wrapper to support async/await syntax
@@ -19,9 +17,9 @@ const adminRouter = require('./routes/admin');
         await mongoose.connect(process.env.CONNECTION_STRING);
         
         const app = express();
-        serviceContainer = await configureServices(app);
-        configureApp(app, serviceContainer);
-        await setSeedSettings(serviceContainer.settingsManager);
+        serviceContainer = await configureServices(app, configuration);
+        configureApp(app, configuration, serviceContainer);
+        await setSeedSettings(configuration, serviceContainer.settingsManager);
         
         //FOR TESTING PURPOSES ONLY
         await serviceContainer.themeManager.setActiveTheme('dev-theme');
@@ -36,29 +34,28 @@ const adminRouter = require('./routes/admin');
 
 
 //Creates services and manages dependencies
-async function configureServices(app) {
+async function configureServices(app, configuration) {
     const serviceContainer = {}
 
     serviceContainer.themeManager = new ThemeManager(configuration.themesDirectory);
-    serviceContainer.settingsManager = await settingsManager(configuration, serviceContainer.themeManager);
+    serviceContainer.settingsManager = await settingsManagerFactory(configuration, serviceContainer.themeManager);
     serviceContainer.viewRenderer = await viewRendererFactory(configuration, app, serviceContainer.themeManager, serviceContainer.settingsManager);
-    serviceContainer.blogRouter = blogRouter(configuration, serviceContainer.viewRenderer);
-    serviceContainer.adminRouter = adminRouter(configuration, serviceContainer.viewRenderer);
 
     return serviceContainer;
 }
 
 //Configures the App pipeline
-function configureApp(app, serviceContainer) {
+function configureApp(app, configuration, serviceContainer) {
     app.set('view engine', 'pug');
     app.set('views', __dirname);
     app.use(express.json());
-    app.use('/blog', serviceContainer.blogRouter);
-    app.use('/admin', serviceContainer.adminRouter);
+
+    const rootRouter = rootRouterFactory(serviceContainer.viewRenderer);
+    app.use('/', rootRouter);
 }
 
 //Add the seed settings to the database
-async function setSeedSettings(settingsManager) {
+async function setSeedSettings(configuration, settingsManager) {
     let settingsSet = {};
 
     for (let setting in configuration.seedSettings) {
