@@ -1,5 +1,5 @@
 nav.navbar.navbar-light.bg-light.navbar-expand-md
-    a.navbar-brand(href='#')= getSiteSetting('Site Title')
+    a.navbar-brand(href='/')= getSiteSetting('Site Title')
 
     button.navbar-toggler(type="button", data-toggle="collapse", data-target="#nav", aria-controls="navbarSupportedContent", aria-expanded="false", aria-label="Toggle navigation")
         span.navbar-toggler-icon
@@ -11,3 +11,6 @@ nav.navbar.navbar-light.bg-light.navbar-expand-md
 
             li.nav-item
                 a.nav-link(href='/blog') Blog
+
+            li.nav-item
+                a.nav-link(href='/admin') Admin
