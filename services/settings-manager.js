@@ -24,8 +24,8 @@ module.exports = async function(configuration, themeManager) {
     }
 
     //Public
-    settingsManager.getThemeSetting = function(setting) {
-        return themeManager.getSetting(setting);
+    settingsManager.getActiveThemeSetting = function(setting) {
+        return themeManager.getActiveThemeSetting(setting);
     }
     
     settingsManager.getSiteSetting = function(setting) {

@@ -101,7 +101,14 @@ ThemeManager.prototype.getActiveThemeDirectory = function() {
 
 //Convience function for getting individual settings from the active theme
 ThemeManager.prototype.getActiveThemeSetting = function(setting) {
-    return this.getActiveTheme().config[setting];
+    const activeTheme = this.getActiveTheme();
+
+    if (activeTheme) {
+        return this.getActiveTheme().config[setting];
+    } else {
+        console.log(`No active theme set. Failed to get setting: ${setting}.`);
+        return undefined;
+    }  
 };
 
 module.exports = ThemeManager;

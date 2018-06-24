@@ -7,7 +7,7 @@ const express = require('express');
 const configuration = require('./wallnut.json');
 const mongoose = require('mongoose');
 const ThemeManager = require('./services/theme-manager');
-const viewManager = require('./services/view-manager');
+const viewRendererFactory = require('./services/view-renderer');
 const settingsManager = require('./services/settings-manager');
 const blogRouter = require('./routes/blog');
 const adminRouter = require('./routes/admin');
@@ -40,11 +40,10 @@ async function configureServices(app) {
     const serviceContainer = {}
 
     serviceContainer.themeManager = new ThemeManager(configuration.themesDirectory);
-
     serviceContainer.settingsManager = await settingsManager(configuration, serviceContainer.themeManager);
-    serviceContainer.viewManager = await viewManager(app, serviceContainer.themeManager, serviceContainer.settingsManager, configuration);
-    serviceContainer.blogRouter = blogRouter(configuration, serviceContainer.viewManager);
-    serviceContainer.adminRouter = adminRouter(configuration, serviceContainer.viewManager);
+    serviceContainer.viewRenderer = await viewRendererFactory(configuration, app, serviceContainer.themeManager, serviceContainer.settingsManager);
+    serviceContainer.blogRouter = blogRouter(configuration, serviceContainer.viewRenderer);
+    serviceContainer.adminRouter = adminRouter(configuration, serviceContainer.viewRenderer);
 
     return serviceContainer;
 }
