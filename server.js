@@ -10,6 +10,7 @@ const ThemeManager = require('./services/theme-manager');
 const viewRendererFactory = require('./services/view-renderer');
 const settingsManagerFactory = require('./services/settings-manager');
 const rootRouterFactory = require('./routes/root');
+const errorHandler = require('./middleware/error-handler');
 
 //Create the database connection, Express app, and server
 (async() => { //Simple wrapper to support async/await syntax
@@ -49,9 +50,12 @@ function configureApp(app, configuration, serviceContainer) {
     app.set('view engine', 'pug');
     app.set('views', __dirname);
     app.use(express.json());
+    app.use('/public', express.static('public'));
 
     const rootRouter = rootRouterFactory(serviceContainer.viewRenderer);
     app.use('/', rootRouter);
+
+    app.use(errorHandler);
 }
 
 //Add the seed settings to the database

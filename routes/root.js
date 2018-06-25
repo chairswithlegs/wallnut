@@ -5,6 +5,7 @@ const path = require('path');
 const blogRouterFactory = require('./blog');
 const adminRouterFactory = require('./admin');
 
+
 module.exports = function(viewManager) {
     //The instance we will be returning (see below)
     const router = express.Router();
@@ -14,7 +15,12 @@ module.exports = function(viewManager) {
 
     router.get('/', async(req, res) => {
         const html = await viewManager.renderPageAsync('front-page');
+        res.header('Content-Type', 'text/html').send(html);
+    });
 
+    //404 response
+    router.get('*', async(req, res) => {
+        const html = await viewManager.renderPageAsync('404');
         res.header('Content-Type', 'text/html').send(html);
     });
 
