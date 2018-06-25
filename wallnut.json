@@ -4,6 +4,7 @@
     "baseUrl": "localhost:3000",
     "modelsDirectory": "./models",
     "seedSettings": {
-        "Site Title": "Your Site"
+        "Site Title": "Your Site",
+        "Site Copyright": "Your Copyright Here"
     }
 }
