@@ -4,6 +4,7 @@ const express = require('express');
 const path = require('path');
 const User = require('../models/user');
 const Post = require('../models/post');
+const Setting = require('../models/setting');
 
 module.exports = function(viewManager) {
     //The instance we will be returning (see below)
@@ -68,8 +69,18 @@ module.exports = function(viewManager) {
     });
 
     router.get('/settings', async(req, res) => {
-        const html = await viewManager.renderAdminPageAsync('admin-settings');
-        res.header('Content-Type', 'text/html').send(html);
+        Setting.find({}, async(error, settings) => {
+            if (error) {
+                throw new Error(error);
+            } else {
+                settings = settings.map((setting) => {
+                    return { key: setting.key, value: setting.value }
+                });
+
+                const html = await viewManager.renderAdminPageAsync('admin-settings', { settings: settings });
+                res.header('Content-Type', 'text/html').send(html);
+            }
+        });
     });
     
     //Post Methods

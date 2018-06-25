@@ -1,1 +1,8 @@
 h1 Admin Settings
+
+each setting, index in settings
+    - var inputId = `${setting.key.split(' ').join('-')}-setting`;
+    label(for=inputId)= setting.key
+    .input-group    
+        input.form-control(type='text', value=setting.value)
+    <br>
