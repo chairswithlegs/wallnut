@@ -6,7 +6,7 @@ const User = require('../models/user');
 const Post = require('../models/post');
 const Setting = require('../models/setting');
 
-module.exports = function(viewManager) {
+module.exports = function(viewManager, settingsManager) {
     //The instance we will be returning (see below)
     const router = express.Router();
 
@@ -144,7 +144,28 @@ module.exports = function(viewManager) {
     });
 
     router.put('/settings', (req, res) => {
-        //Update the site settings
+        settings = req.body;
+        dbOperations = [];
+
+        //Update each setting in the database
+        for (let setting in settings){
+            dbOperations.push(new Promise((resolve, reject) => {
+                Setting.update({ key: setting }, { value: settings[setting] }, (error, _setting) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(_setting);
+                    }
+                });
+            }));
+        }
+
+        //If the updates work send the reponse and update the settings cache
+        Promise.all(dbOperations)
+        .then(() => {
+            res.send(settings);
+            settingsManager.loadSiteSettings();
+        });
     });
     
     return router;

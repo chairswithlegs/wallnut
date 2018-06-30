@@ -52,7 +52,7 @@ function configureApp(app, configuration, serviceContainer) {
     app.use(express.json());
     app.use('/public', express.static('public'));
 
-    const rootRouter = rootRouterFactory(serviceContainer.viewRenderer);
+    const rootRouter = rootRouterFactory(serviceContainer.viewRenderer, serviceContainer.settingsManager);
     app.use('/', rootRouter);
 
     app.use(errorHandler);

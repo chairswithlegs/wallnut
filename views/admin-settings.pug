@@ -1,8 +1,16 @@
 h1 Admin Settings
 
-each setting, index in settings
-    - var inputId = `${setting.key.split(' ').join('-')}-setting`;
-    label(for=inputId)= setting.key
-    .input-group    
-        input.form-control(type='text', value=setting.value)
-    <br>
+form
+    each setting, index in settings
+        - var inputId = `${setting.key.split(' ').join('-')}-setting`;
+        label(for=inputId)= setting.key
+        .input-group    
+            input.form-control(type='text', id=inputId, value=setting.value, data-setting-key=setting.key)
+        <br>
+    button.btn.btn-primary(type='button', id='form-submit-button') Save
+    span.d-none.pl-2(id='success-alert') Settings successfully saved.
+    span.d-none.text-danger.pl-2(id='error-alert') Uh-oh, something went wrong.
+
+
+script(id='admin-settings-script', data-settings=JSON.stringify(settings))
+    include admin-settings.js

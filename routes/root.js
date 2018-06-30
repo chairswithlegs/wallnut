@@ -6,12 +6,12 @@ const blogRouterFactory = require('./blog');
 const adminRouterFactory = require('./admin');
 
 
-module.exports = function(viewManager) {
+module.exports = function(viewManager, settingsManager) {
     //The instance we will be returning (see below)
     const router = express.Router();
 
     router.use('/blog', blogRouterFactory(viewManager));
-    router.use('/admin', adminRouterFactory(viewManager));
+    router.use('/admin', adminRouterFactory(viewManager, settingsManager));
 
     router.get('/', async(req, res) => {
         const html = await viewManager.renderPageAsync('front-page');
