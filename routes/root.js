@@ -1,4 +1,8 @@
-//This file manages the root ('/') route
+/*
+* This file manages the root ('/') route
+*
+* This router also serves as the entry point for all other routers.
+*/
 
 const express = require('express');
 const path = require('path');

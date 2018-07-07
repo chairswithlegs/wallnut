@@ -1,3 +1,10 @@
+/*
+* This service is a wrapper for Express.App.render
+*
+* It also maintains a 'View Map' that allows for dynamic mapping of template
+* files by view name
+*/
+
 const fs = require('fs');
 
 function ViewRenderer(app, viewExtension) {
@@ -86,7 +93,7 @@ ViewRenderer.prototype.renderPageAsync = async function(view, options={}, useVie
         footer: await this.renderAsync('footer'),
         content: await this.renderAsync(view, options, useViewMap)
     }
-    
+
     if (this.getViewPath('theme-scripts')) {
         layoutOptions.themeScripts = await this.renderAsync('theme-scripts');
     }
@@ -101,7 +108,7 @@ ViewRenderer.prototype.renderAdminPageAsync = async function(view, options={}, u
         footer: await this.renderAsync('admin-footer'),
         content: await this.renderAsync(view, options, useViewMap)
     }
-    
+
     if (this.getViewPath('theme-scripts')) {
         layoutOptions.themeScripts = await this.renderAsync('theme-scripts');
     }
@@ -109,7 +116,11 @@ ViewRenderer.prototype.renderAdminPageAsync = async function(view, options={}, u
     return this.renderAsync('layout', layoutOptions);
 }
 
-
+/*
+* Factory function that populates the ViewInjection, adds an event listener
+* that updates the ViewMap when the theme changes, and ensures the ViewMap
+* is loaded before returning the service
+*/
 module.exports = async function(configuration, app, themeManager, settingsManager) {
     const viewRenderer = new ViewRenderer(app, 'pug');
 
@@ -129,7 +140,8 @@ module.exports = async function(configuration, app, themeManager, settingsManage
         viewRenderer.populateViewMap(themeManager.getActiveThemeDirectory());
     });
 
+    //Ensure the initial views have been loaded at the start
     await viewRenderer.populateViewMap(configuration.coreViews);
-    
+
     return viewRenderer;
 }

@@ -1,7 +1,4 @@
-/*
-* This file exports the ThemeManager constructor
-* The theme manager can be used for managing theme state and getting information about available themes
-*/
+//This service can be used for managing theme state and getting information about available themes
 
 const fs = require('fs');
 const EventEmitter = require('events');

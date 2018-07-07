@@ -1,3 +1,5 @@
+//This middleware handles any uncaught errors in the Express pipeline
+
 const express = require('express');
 
 module.exports = function(error, req, res, next) {
@@ -6,5 +8,5 @@ module.exports = function(error, req, res, next) {
         res.write(JSON.stringify(error));
     }
     
-    res.send('Server error.');
+    res.status(500).send('Server error.');
 }
