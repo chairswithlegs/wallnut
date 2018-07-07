@@ -13,13 +13,16 @@ module.exports = function(viewManager, settingsManager) {
     //Add the authentication routes
     router.use('/', authenticationRouter(viewManager));
 
+    //Add authentication protection to all following routes
+    router.all('*', passport.authenticate('jwt', { session: false }));
+
     //Get Methods
-    router.get('/', passport.authenticate('jwt', { session: false }), async(req, res) => {
+    router.get('/', async(req, res) => {
         const html = await viewManager.renderAdminPageAsync('admin-dashboard');
         res.header('Content-Type', 'text/html').send(html);
     });
 
-    router.get('/posts', passport.authenticate('jwt', { session: false }), async(req, res) => {
+    router.get('/posts', async(req, res) => {
         try {
             const posts = await new Promise((resolve, reject) => {
                 Post.find({}, (error, posts) => {
@@ -40,12 +43,12 @@ module.exports = function(viewManager, settingsManager) {
         }
     });
 
-    router.get('/posts/create', passport.authenticate('jwt', { session: false }), async(req, res) => {
+    router.get('/posts/create', async(req, res) => {
         const html = await viewManager.renderAdminPageAsync('admin-edit-post');
         res.header('Content-Type', 'text/html').send(html);
     });
     
-    router.get('/posts/:id', passport.authenticate('jwt', { session: false }), async(req, res) => {
+    router.get('/posts/:id', async(req, res) => {
         try {
             const post = await new Promise((resolve, reject) => {
                 Post.findById(req.params.id, (error, post) => {
@@ -66,7 +69,7 @@ module.exports = function(viewManager, settingsManager) {
         }
     });
 
-    router.get('/settings', passport.authenticate('jwt', { session: false }), async(req, res) => {
+    router.get('/settings', async(req, res) => {
         Setting.find({}, async(error, settings) => {
             if (error) {
                 throw new Error(error);
@@ -82,7 +85,7 @@ module.exports = function(viewManager, settingsManager) {
     });
     
     //Post Methods
-    router.post('/posts', passport.authenticate('jwt', { session: false }), (req, res) => {
+    router.post('/posts', (req, res) => {
         try {
             if (!req.body.title || !req.body.content) {
                 res.status(400).send('Post must include a title and content.');
@@ -111,7 +114,7 @@ module.exports = function(viewManager, settingsManager) {
     });
     
     //Put Methods
-    router.put('/posts/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+    router.put('/posts/:id', (req, res) => {
         try {
             if (!req.body.title || !req.body.content || !req.body.id) {
                 res.status(400).send('Post must include a title, content, and id.');
@@ -141,7 +144,7 @@ module.exports = function(viewManager, settingsManager) {
         }
     });
 
-    router.put('/settings', passport.authenticate('jwt', { session: false }), (req, res) => {
+    router.put('/settings', (req, res) => {
         settings = req.body;
         dbOperations = [];
 
