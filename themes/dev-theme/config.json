@@ -1,3 +1,7 @@
 {
-    "themeName":"dev-theme"
+    "themeName":"dev-theme",
+    "siteSettings": {
+        "settingOne": "value one",
+        "settingTwo": "value two"
+    }
 }
