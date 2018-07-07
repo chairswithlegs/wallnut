@@ -6,19 +6,19 @@ const Setting = require('../models/setting');
 const passport = require('passport');
 const authenticationRouter = require('./authentication');
 
-module.exports = function(viewManager, settingsManager) {
+module.exports = function(serviceContainer) {
     //The instance we will be returning (see below)
     const router = express.Router();
 
     //Add the authentication routes
-    router.use('/', authenticationRouter(viewManager));
+    router.use('/', authenticationRouter(serviceContainer.viewRenderer));
 
     //Add authentication protection to all following routes
     router.all('*', passport.authenticate('jwt', { session: false }));
 
     //Get Methods
     router.get('/', async(req, res) => {
-        const html = await viewManager.renderAdminPageAsync('admin-dashboard');
+        const html = await serviceContainer.viewRenderer.renderAdminPageAsync('admin-dashboard');
         res.header('Content-Type', 'text/html').send(html);
     });
 
@@ -34,7 +34,7 @@ module.exports = function(viewManager, settingsManager) {
                 });
             });
             
-            const html = await viewManager.renderAdminPageAsync('admin-posts', { posts: posts });
+            const html = await serviceContainer.viewRenderer.renderAdminPageAsync('admin-posts', { posts: posts });
             res.header('Content-Type', 'text/html').send(html);
             
         } catch(error) {
@@ -44,7 +44,7 @@ module.exports = function(viewManager, settingsManager) {
     });
 
     router.get('/posts/create', async(req, res) => {
-        const html = await viewManager.renderAdminPageAsync('admin-edit-post');
+        const html = await serviceContainer.viewRenderer.renderAdminPageAsync('admin-edit-post');
         res.header('Content-Type', 'text/html').send(html);
     });
     
@@ -60,7 +60,7 @@ module.exports = function(viewManager, settingsManager) {
                 });
             });
             
-            const html = await viewManager.renderAdminPageAsync('admin-edit-post', { post: post });
+            const html = await serviceContainer.viewRenderer.renderAdminPageAsync('admin-edit-post', { post: post });
             res.header('Content-Type', 'text/html').send(html);
             
         } catch(error) {
@@ -78,7 +78,7 @@ module.exports = function(viewManager, settingsManager) {
                     return { key: setting.key, value: setting.value }
                 });
 
-                const html = await viewManager.renderAdminPageAsync('admin-settings', { settings: settings });
+                const html = await serviceContainer.viewRenderer.renderAdminPageAsync('admin-settings', { settings: settings });
                 res.header('Content-Type', 'text/html').send(html);
             }
         });
@@ -165,7 +165,7 @@ module.exports = function(viewManager, settingsManager) {
         Promise.all(dbOperations)
         .then(() => {
             res.send(settings);
-            settingsManager.loadSiteSettings();
+            serviceContainer.settingsManager.loadSiteSettings();
         });
     });
     

@@ -10,21 +10,21 @@ const blogRouterFactory = require('./blog');
 const adminRouterFactory = require('./admin');
 
 
-module.exports = function(viewManager, settingsManager) {
+module.exports = function(serviceContainer) {
     //The instance we will be returning (see below)
     const router = express.Router();
 
-    router.use('/blog', blogRouterFactory(viewManager));
-    router.use('/admin', adminRouterFactory(viewManager, settingsManager));
+    router.use('/blog', blogRouterFactory(serviceContainer));
+    router.use('/admin', adminRouterFactory(serviceContainer));
 
     router.get('/', async(req, res) => {
-        const html = await viewManager.renderPageAsync('front-page');
+        const html = await serviceContainer.viewRenderer.renderPageAsync('front-page');
         res.header('Content-Type', 'text/html').send(html);
     });
 
     //404 response
     router.get('*', async(req, res) => {
-        const html = await viewManager.renderPageAsync('404');
+        const html = await serviceContainer.viewRenderer.renderPageAsync('404');
         res.header('Content-Type', 'text/html').send(html);
     });
 

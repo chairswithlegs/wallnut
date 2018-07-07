@@ -84,24 +84,4 @@ SettingsManager.prototype.clearThemeSettings = function() {
     });
 }
 
-//Async factory function to ensure cache is loaded before making the service available
-module.exports = async function(configuration, themeManager) {
-    settingsManager = new SettingsManager(themeManager);
-    
-    themeManager.on('theme-activated', async() => {
-        await settingsManager.clearThemeSettings();
-        siteSettings = settingsManager.getActiveThemeSetting('siteSettings');
-        
-        if (process.env.NODE_ENV) {
-            console.log('Set the following theme settings:');
-        }
-        
-        Object.keys(siteSettings).forEach((key) => {
-            settingsManager.setSiteSetting(key, siteSettings[key], true);
-            console.log(key + ': ' + siteSettings[key]);
-        });
-    });
-    
-    await settingsManager.loadSiteSettings();
-    return settingsManager;
-}
+module.exports = SettingsManager;

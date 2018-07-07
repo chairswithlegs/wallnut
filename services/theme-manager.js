@@ -37,6 +37,10 @@ function ThemeManager(themesDirectory) {
         //Update the internal theme ref and update subscribers
         activeTheme = new ThemeSnapshot(themeName, themeConfig);
         this.emit('theme-activated');
+
+        if (process.env.NODE_ENV === 'development') {
+            console.log(`Theme activated: ${this.getActiveTheme().name}`);
+        }
     }
 
     this.getActiveTheme = function() {

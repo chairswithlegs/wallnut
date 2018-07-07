@@ -5,7 +5,7 @@ const path = require('path');
 const User = require('../models/user');
 const Post = require('../models/post');
 
-module.exports = function(viewManager) {
+module.exports = function(serviceContainer) {
     //The instance we will be returning (see below)
     const router = express.Router();
 
@@ -22,7 +22,7 @@ module.exports = function(viewManager) {
                 });
             });
             
-            const html = await viewManager.renderPageAsync('blog', { posts: posts });
+            const html = await serviceContainer.viewRenderer.renderPageAsync('blog', { posts: posts });
             res.header('Content-Type', 'text/html').send(html);
 
         } catch(error) {
@@ -38,7 +38,7 @@ module.exports = function(viewManager) {
             } else if (!post) {
                 res.status(404).send('Post not found.');
             } else {
-                const html = await viewManager.renderPageAsync('post', { post: post });
+                const html = await serviceContainer.viewRenderer.renderPageAsync('post', { post: post });
                 res.header('Content-Type', 'text/html').send(html);
             }
         });

@@ -116,32 +116,4 @@ ViewRenderer.prototype.renderAdminPageAsync = async function(view, options={}, u
     return this.renderAsync('layout', layoutOptions);
 }
 
-/*
-* Factory function that populates the ViewInjection, adds an event listener
-* that updates the ViewMap when the theme changes, and ensures the ViewMap
-* is loaded before returning the service
-*/
-module.exports = async function(configuration, app, themeManager, settingsManager) {
-    const viewRenderer = new ViewRenderer(app, 'pug');
-
-    //Expose certain setting service functions to the template
-    viewRenderer.setViewInjection({
-        getActiveThemeSetting: settingsManager.getActiveThemeSetting,
-        getSiteSetting: settingsManager.getSiteSetting
-    });
-    
-    //Update the viewMap whenever the theme changes
-    themeManager.on('theme-activated', async () => {
-        //Reset the view map
-        viewRenderer.clearViewPaths();
-        await viewRenderer.populateViewMap(configuration.coreViews);
-        
-        //Update the view map with the new theme's views
-        viewRenderer.populateViewMap(themeManager.getActiveThemeDirectory());
-    });
-
-    //Ensure the initial views have been loaded at the start
-    await viewRenderer.populateViewMap(configuration.coreViews);
-
-    return viewRenderer;
-}
+module.exports = ViewRenderer;

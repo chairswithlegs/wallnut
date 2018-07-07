@@ -4,13 +4,13 @@ const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
-module.exports = function(viewManager) {
+module.exports = function(serviceContainer) {
     //The instance we will be returning (see below)
     const router = express.Router();
     
     //Get Methods
     router.get('/login', async(req, res) => {
-        const html = await viewManager.renderPageAsync('admin-login');
+        const html = await serviceContainer.viewRenderer.renderPageAsync('admin-login');
         res.header('Content-Type', 'text/html').send(html);
     });
 
