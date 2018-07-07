@@ -13,4 +13,12 @@ nav.navbar.navbar-dark.bg-dark.navbar-expand-md
             li.nav-item
                 a.nav-link(href='/admin/settings') Settings
             li.nav-item
-                a.nav-link(href='/') Logout
+                a.nav-link(href='/', id='logout-button') Logout
+
+script
+    include authentication-manager.js
+script.
+    document.getElementById('logout-button').addEventListener('click', function() {
+        authenticationManager.logout();
+    });
+    

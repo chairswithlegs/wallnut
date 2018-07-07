@@ -23,7 +23,7 @@ var authenticationManager = {
         });
     },
     logout: function() {
-        document.cookie = 'expires=Thu, 01 Jan 1970 00:00:00 UTC';
+        document.cookie = 'jwt=;expires=Thu, 01 Jan 1970 00:00:00 UTC';
     },
     isAuthenticated: function() {
         if (document.cookie.indexOf('jwt=Bearer') === -1) {
