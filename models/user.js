@@ -17,13 +17,15 @@ userSchema.pre('save', function(next) { //Don't use an arrow function, mongoose 
     });
 });
 
-userSchema.methods.comparePassword = function(password, callback) { //Don't use an arrow function, mongoose  will set 'this' to the user object
-    bcrypt.compare(password, this.password, (error, match) => {
-        if (error) {
-            callback(error);
-        } else {
-            callback(error, match);
-        }
+userSchema.methods.comparePassword = function(password) { //Don't use an arrow function, mongoose  will set 'this' to the user object
+    return new Promise((resolve, reject) => {
+        bcrypt.compare(password, this.password, (error, match) => {
+            if (error) {
+                reject(error)
+            } else {
+                resolve(match);
+            }
+        });
     });
 }
 

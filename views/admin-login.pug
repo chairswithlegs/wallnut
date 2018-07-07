@@ -10,4 +10,16 @@ div(style='max-width: 540px; margin: auto;')
             label(for='login-password') Content
             input.form-control(type='password', id='login-password', placeholder="Password")
 
-        button.btn.btn-primary(type='button') Submit
+        button.btn.btn-primary(type='button', id='login-button') Submit
+
+script
+    include authentication-manager.js
+script.
+    var username = document.getElementById('login-username');
+    var password = document.getElementById('login-password');
+
+    document.getElementById('login-button').addEventListener('click', function(event) {
+        event.preventDefault();
+        authenticationManager.login(username.value, password.value, './');
+    });
+    
