@@ -69,9 +69,9 @@ function configureAuth(app) {
     //Setup JWT auth strategy, will be used to verify client submitted cookies containing the JWTs
     function cookieExtractor(req) {
         let token;
-        if (req && req.cookies)
+        if (req && req.cookies && req.cookies['jwt'])
         {
-            token = req.cookies['jwt'];
+            token = req.cookies['jwt'].slice(7); //Extract the token and remove the 'Bearer' prefix
         }
         return token;
     };
