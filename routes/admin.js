@@ -22,15 +22,25 @@ module.exports = function(serviceContainer) {
         res.header('Content-Type', 'text/html').send(html);
     });
     
-    router.get('/themes', async(req, res) => {
-        const themeList = await serviceContainer.themeManager.getThemeList();
-        const activeTheme = await serviceContainer.themeManager.getActiveTheme().name;
+    router.get('/themes', async(req, res, next) => {
+        try {
+            const themeList = await serviceContainer.themeManager.getThemeList();
         
-        const html = await serviceContainer.viewRenderer.renderAdminPageAsync('admin-themes', { 
-            themeList: themeList,
-            activeTheme: activeTheme
-        });
-        res.header('Content-Type', 'text/html').send(html);
+            let activeTheme = await serviceContainer.themeManager.getActiveTheme();
+            if (activeTheme) {
+                activeTheme = activeTheme.name;
+            } else {
+                activeTheme = '';
+            }
+    
+            const html = await serviceContainer.viewRenderer.renderAdminPageAsync('admin-themes', { 
+                themeList: themeList,
+                activeTheme: activeTheme
+            });
+            res.header('Content-Type', 'text/html').send(html);
+        } catch(error) {
+            next(error);
+        }
     });
     
     router.get('/posts', async(req, res) => {
