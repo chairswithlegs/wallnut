@@ -90,7 +90,6 @@ async function createViewRenderer(configuration, app, themeManager, settingsMana
     }
 }
 
-//Add the seed settings to the database
 async function setSeedSettings(configuration, settingsManager) {
     try {
         let settingsSet = {};

@@ -4,14 +4,14 @@ const express = require('express');
 const Post = require('../models/post');
 const Setting = require('../models/setting');
 const passport = require('passport');
-const authenticationRouter = require('./authentication');
+const authenticationRouterFactory = require('./authentication');
 
 module.exports = function(serviceContainer) {
     //The instance we will be returning (see below)
     const router = express.Router();
 
     //Add the authentication routes
-    router.use('/', authenticationRouter(serviceContainer.viewRenderer));
+    router.use('/', authenticationRouterFactory(serviceContainer));
 
     //Add authentication protection to all following routes
     router.all('*', passport.authenticate('jwt', { session: false }));
@@ -19,6 +19,17 @@ module.exports = function(serviceContainer) {
     //Get Methods
     router.get('/', async(req, res) => {
         const html = await serviceContainer.viewRenderer.renderAdminPageAsync('admin-dashboard');
+        res.header('Content-Type', 'text/html').send(html);
+    });
+
+    router.get('/themes', async(req, res) => {
+        const themeList = await serviceContainer.themeManager.getThemeList();
+        const activeTheme = await serviceContainer.themeManager.getActiveTheme().name;
+
+        const html = await serviceContainer.viewRenderer.renderAdminPageAsync('admin-themes', { 
+            themeList: themeList,
+            activeTheme: activeTheme
+        });
         res.header('Content-Type', 'text/html').send(html);
     });
 
