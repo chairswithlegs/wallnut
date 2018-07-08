@@ -49,6 +49,16 @@ Similar to post.pug, admin-posts.pug can accesss the post data via the *post* ob
     p= post.content
 
 
+## admin-themes.pug
+
+An array of the names of installed themes are injected via *themeList* and the active theme name can be accessed by *activeTheme*.
+    each theme in themeList
+        h1= theme
+        
+        if theme === activeTheme
+            h2 Active
+
+
 ## layout.pug
 
 The layout.pug context includes: *header, content, footer* and (optionally) *themeScripts*. *header* and *footer* are the rendered header.pug and footer.pug templates (or admin-header.pug and admin-footer.pug if rendering an admin view). *content* is also a rendered template that varies based on the URL being accessed (e.g. when request is for '/blog' then content becomes the HTML rendered by blog.pug). *themeScripts* is also available to the layout.pug context if theme-scripts.pug is present in the active theme's directory, otherwise it will be *undefined*.
