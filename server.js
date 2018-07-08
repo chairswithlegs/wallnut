@@ -22,9 +22,6 @@ const passport = require('passport');
         serviceContainer = await configureServices(app);
         configureMiddleware(app, serviceContainer);
 
-        //FOR TESTING PURPOSES ONLY
-        await serviceContainer.themeManager.setActiveTheme('dev-theme');
-        
         const server = app.listen(process.env.PORT || 3000, () => {
             console.log(`Server listening on port ${server.address().port}`);
         });
