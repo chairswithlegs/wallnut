@@ -9,30 +9,30 @@ const authenticationRouterFactory = require('./authentication');
 module.exports = function(serviceContainer) {
     //The instance we will be returning (see below)
     const router = express.Router();
-
+    
     //Add the authentication routes
     router.use('/', authenticationRouterFactory(serviceContainer));
-
+    
     //Add authentication protection to all following routes
     router.all('*', passport.authenticate('jwt', { session: false }));
-
+    
     //Get Methods
     router.get('/', async(req, res) => {
         const html = await serviceContainer.viewRenderer.renderAdminPageAsync('admin-dashboard');
         res.header('Content-Type', 'text/html').send(html);
     });
-
+    
     router.get('/themes', async(req, res) => {
         const themeList = await serviceContainer.themeManager.getThemeList();
         const activeTheme = await serviceContainer.themeManager.getActiveTheme().name;
-
+        
         const html = await serviceContainer.viewRenderer.renderAdminPageAsync('admin-themes', { 
             themeList: themeList,
             activeTheme: activeTheme
         });
         res.header('Content-Type', 'text/html').send(html);
     });
-
+    
     router.get('/posts', async(req, res) => {
         try {
             const posts = await new Promise((resolve, reject) => {
@@ -53,7 +53,7 @@ module.exports = function(serviceContainer) {
             res.status(500).send('Server error.');
         }
     });
-
+    
     router.get('/posts/create', async(req, res) => {
         const html = await serviceContainer.viewRenderer.renderAdminPageAsync('admin-edit-post');
         res.header('Content-Type', 'text/html').send(html);
@@ -79,7 +79,7 @@ module.exports = function(serviceContainer) {
             res.status(500).send('Server error.');
         }
     });
-
+    
     router.get('/settings', async(req, res) => {
         Setting.find({}, async(error, settings) => {
             if (error) {
@@ -88,7 +88,7 @@ module.exports = function(serviceContainer) {
                 settings = settings.map((setting) => {
                     return { key: setting.key, value: setting.value }
                 });
-
+                
                 const html = await serviceContainer.viewRenderer.renderAdminPageAsync('admin-settings', { settings: settings });
                 res.header('Content-Type', 'text/html').send(html);
             }
@@ -154,11 +154,11 @@ module.exports = function(serviceContainer) {
             res.status(500).send('Server error.');
         }
     });
-
+    
     router.put('/settings', (req, res) => {
         settings = req.body;
         dbOperations = [];
-
+        
         //Update each setting in the database
         for (let setting in settings){
             dbOperations.push(new Promise((resolve, reject) => {
@@ -171,13 +171,29 @@ module.exports = function(serviceContainer) {
                 });
             }));
         }
-
+        
         //If the updates work send the reponse and update the settings cache
         Promise.all(dbOperations)
         .then(() => {
             res.send(settings);
             serviceContainer.settingsManager.loadSiteSettings();
         });
+    });
+    
+    router.put('/themes', async(req, res, next) => {
+        try {
+            const activatedTheme = req.body.activatedTheme;
+
+            if (!activatedTheme) {
+                res.status(400).send('Request must be in the form of { activatedTheme: <THEME NAME> }.');
+            } else {
+                await serviceContainer.themeManager.setActiveTheme(activatedTheme);
+                res.json({ activatedTheme: activatedTheme });
+            }
+        }
+        catch(error) {
+            next(error);
+        }
     });
     
     return router;
