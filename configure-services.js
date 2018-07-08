@@ -33,6 +33,10 @@ async function createSettingsManager(themeManager) {
                 await settingsManager.clearThemeSettings();
                 siteSettings = settingsManager.getActiveThemeSetting('siteSettings');
                 
+                if (!siteSettings) {
+                    return;
+                }
+
                 if (process.env.NODE_ENV === 'development') {
                     console.log('Set the following site settings based on the theme config:');
                 }
