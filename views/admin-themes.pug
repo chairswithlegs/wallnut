@@ -1,9 +1,46 @@
 h1 Admin Themes
 
-each theme in themeList
-    if theme === activeTheme
-        .card.bg-primary
-            h5.card-title= theme
-    else
-        .card
-            h5.card-title= theme
+ul.list-group         
+    each theme in themeList
+        if theme === activeTheme
+            li.list-group-item.active
+                span= theme
+                a(href='#', data-theme=theme).text-primary.float-right.activation-link.invisible Activate
+        else
+            li.list-group-item
+                span= theme
+                a(href='#', data-theme=theme).text-primary.float-right.activation-link Activate
+
+script.
+    activationLinks = document.getElementsByClassName('activation-link');
+
+    for (var i=0; i<activationLinks.length; i++) {
+        (function() {
+            var link = activationLinks[i];
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                sendActivationRequest(link.dataset.theme, link);
+            });
+        })();
+    };
+
+    function sendActivationRequest(themeName, link) {
+        var req = new XMLHttpRequest();
+        req.responseType = 'json'
+        req.open('PUT', './themes');
+        req.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+        req.send(JSON.stringify({ activatedTheme: themeName }));
+        req.addEventListener('load', function() {
+            console.log(req.response);
+
+            highlightTheme(link);
+        });
+    }
+
+    function highlightTheme(link) {
+        document.getElementsByClassName('active')[0].classList.remove('active');
+        document.getElementsByClassName('invisible')[0].classList.remove('invisible');
+
+        link.parentElement.classList.add('active');
+        link.classList.add('invisible');
+    }
