@@ -28,7 +28,7 @@ async function createSettingsManager(themeManager) {
     try {
         settingsManager = new SettingsManager(themeManager);
         
-        themeManager.on('theme-activated', async() => {
+        themeManager.on('new-theme-activated', async() => {
             try {
                 await settingsManager.clearThemeSettings();
                 siteSettings = settingsManager.getActiveThemeSetting('siteSettings');
@@ -67,8 +67,8 @@ async function createViewRenderer(configuration, app, themeManager, settingsMana
             getSiteSetting: settingsManager.getSiteSetting
         });
         
-        //Update the viewMap whenever the theme changes
-        themeManager.on('theme-activated', async () => {
+        //Update the viewMap whenever the theme is loaded
+        themeManager.on('theme-loaded', async () => {
             try {
                 //Reset the view map
                 viewRenderer.clearViewPaths();

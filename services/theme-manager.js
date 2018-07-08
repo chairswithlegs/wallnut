@@ -34,9 +34,14 @@ function ThemeManager(themesDirectory) {
             });
         });
 
+        //Send an alert if we are transitioning to a new theme
+        if (activeTheme && activeTheme.name !== themeName) {
+            this.emit('new-theme-activated');
+        }
+        
         //Update the internal theme ref and update subscribers
         activeTheme = new ThemeSnapshot(themeName, themeConfig);
-        this.emit('theme-activated');
+        this.emit('theme-loaded');
 
         if (process.env.NODE_ENV === 'development') {
             console.log(`Theme activated: ${this.getActiveTheme().name}`);
