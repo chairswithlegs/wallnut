@@ -24,9 +24,11 @@ function ThemeManager(themesDirectory) {
         }
         
         //Load the new theme config
-        themeConfig = await new Promise((resolve, reject) => {
+        const themeConfig = await new Promise((resolve, reject) => {
             fs.readFile(`${this.themesDirectory}/${themeName}/config.json`, (error, data) => {
-                if (error) {
+                if (error && error.code === 'ENOENT') { //File does not exist error handling
+                    resolve({});
+                } else if (error) { //Propagate any other errors
                     reject(error);
                 } else {
                     resolve(JSON.parse(data));
