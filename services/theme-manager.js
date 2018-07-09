@@ -7,15 +7,15 @@ const EventEmitter = require('events');
 function ThemeSnapshot(name, config={}) {
     this.name = name;
     this.config = config;
-
+    
     Object.freeze(this);
 }
 
 function ThemeManager(themesDirectory) {
     let activeTheme;
-
+    
     this.themesDirectory = themesDirectory;
-
+    
     this.setActiveTheme = async function(themeName) {
         //Ensure theme exists
         let exists = await this.themeExists(themeName);
@@ -35,7 +35,7 @@ function ThemeManager(themesDirectory) {
                 }
             });
         });
-
+        
         //Send an alert if we are transitioning to a new theme
         if (activeTheme && activeTheme.name !== themeName) {
             this.emit('new-theme-activated');
@@ -44,15 +44,27 @@ function ThemeManager(themesDirectory) {
         //Update the internal theme ref and update subscribers
         activeTheme = new ThemeSnapshot(themeName, themeConfig);
         this.emit('theme-loaded');
-
+        
         if (process.env.NODE_ENV === 'development') {
-            console.log(`Theme activated: ${this.getActiveTheme().name}`);
+            console.log(`Theme activated: ${this.getActiveTheme()}`);
         }
     }
-
+    
     this.getActiveTheme = function() {
-        return activeTheme;
+        return activeTheme.name;
     }
+
+    this.getActiveThemeSetting = function(setting) {
+        if (activeTheme) {
+            return activeTheme.config[setting];
+        } else {
+            if (NODE_ENV==='development') {
+                console.log(`No active theme set. Failed to get setting: ${setting}.`);
+            }
+
+            return undefined;
+        }  
+    };
 }
 
 //Inherit from EventEmitter without risking modification of the EventEmitter prototype
@@ -104,19 +116,7 @@ ThemeManager.prototype.themeExists = function(themeName) {
 
 //Return the path of the current theme
 ThemeManager.prototype.getActiveThemeDirectory = function() {
-    return `${this.themesDirectory}/${this.getActiveTheme().name}`;
-};
-
-//Convience function for getting individual settings from the active theme
-ThemeManager.prototype.getActiveThemeSetting = function(setting) {
-    const activeTheme = this.getActiveTheme();
-
-    if (activeTheme) {
-        return this.getActiveTheme().config[setting];
-    } else {
-        console.log(`No active theme set. Failed to get setting: ${setting}.`);
-        return undefined;
-    }  
+    return `${this.themesDirectory}/${this.getActiveTheme()}`;
 };
 
 module.exports = ThemeManager;

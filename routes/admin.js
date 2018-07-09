@@ -25,13 +25,7 @@ module.exports = function(serviceContainer) {
     router.get('/themes', async(req, res, next) => {
         try {
             const themeList = await serviceContainer.themeManager.getThemeList();
-        
-            let activeTheme = await serviceContainer.themeManager.getActiveTheme();
-            if (activeTheme) {
-                activeTheme = activeTheme.name;
-            } else {
-                activeTheme = '';
-            }
+            const activeTheme = await serviceContainer.themeManager.getActiveTheme();
     
             const html = await serviceContainer.viewRenderer.renderAdminPageAsync('admin-themes', { 
                 themeList: themeList,
@@ -91,7 +85,7 @@ module.exports = function(serviceContainer) {
     });
     
     router.get('/settings', async(req, res) => {
-        Setting.find({}, async(error, settings) => {
+        Setting.find({ hidden: false }, async(error, settings) => {
             if (error) {
                 throw new Error(error);
             } else {

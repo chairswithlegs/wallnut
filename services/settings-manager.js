@@ -36,39 +36,34 @@ function SettingsManager(themeManager) {
 }
 
 //Add or update a site setting in the database
-SettingsManager.prototype.setSiteSetting = function(key, value, themeSetting=false) {
+SettingsManager.prototype.setSiteSetting = function(key, value, themeSetting=false, hidden=false) {
     return new Promise((resolve, reject) => {
         Setting.findOne({ key: key }, (error, setting) => {
             if (error) {
                 reject(error);
             } else if (!setting) { //If the setting doesn't exist, create it
-            Setting.create({ key: key, value: value, themeSetting: themeSetting }, (error, setting) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    this.loadSiteSettings(); //Sync the cache
-                    resolve(setting);
-                }
-            });
-        } else { //If the setting does exist, update it
-            setting.value = value;
-            setting.themeSetting = themeSetting;
-            setting.save((error, updatedSetting) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    this.loadSiteSettings(); //Sync the cache
-                    resolve(updatedSetting);
-                }
-            });
-        }
+                Setting.create({ key: key, value: value, themeSetting: themeSetting, hidden: hidden }, (error, setting) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        this.loadSiteSettings(); //Sync the cache
+                        resolve(setting);
+                    }
+                });
+            } else { //If the setting does exist, update it
+                setting.value = value;
+                setting.themeSetting = themeSetting;
+                setting.save((error, updatedSetting) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        this.loadSiteSettings(); //Sync the cache
+                        resolve(updatedSetting);
+                    }
+                });
+            }
+        });
     });
-});
-}
-
-//Getter for the active theme setting (generated from the theme config)
-SettingsManager.prototype.getActiveThemeSetting = function(setting) {
-    return this.themeManager.getActiveThemeSetting(setting);
 }
 
 //Removes any theme settings from the database

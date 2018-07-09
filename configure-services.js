@@ -11,12 +11,20 @@ module.exports = async function configureServices(app) {
     try {
         const serviceContainer = {}
         
+        //Create the services
         serviceContainer.themeManager = new ThemeManager(configuration.themesDirectory);
         serviceContainer.settingsManager = await createSettingsManager(serviceContainer.themeManager);
         serviceContainer.viewRenderer = await createViewRenderer(configuration, app, serviceContainer.themeManager, serviceContainer.settingsManager);
         
+        //Apply any seed data to the database
         await setSeedSettings(configuration, serviceContainer.settingsManager);
         
+        //Activate the theme if one is set in the database
+        const currentTheme = await serviceContainer.settingsManager.getSiteSetting('Active Theme');
+        if (currentTheme) {
+            await serviceContainer.themeManager.setActiveTheme(currentTheme);
+        }
+
         return serviceContainer;
     } catch(error) {
         console.log(`Failed to create the service container: ${error}`);
@@ -28,10 +36,21 @@ async function createSettingsManager(themeManager) {
     try {
         settingsManager = new SettingsManager(themeManager);
         
+        themeManager.on('theme-loaded', async() => {
+            try { 
+                //Update the theme in the database
+                await settingsManager.setSiteSetting('Active Theme', themeManager.getActiveTheme(), false, true);
+            } catch(error) {
+                console.log(`Failed to save active theme to database: ${error}`);
+            }
+
+        });
+
         themeManager.on('new-theme-activated', async() => {
             try {
+                //Load theme specific site settings
                 await settingsManager.clearThemeSettings();
-                siteSettings = settingsManager.getActiveThemeSetting('siteSettings');
+                siteSettings = themeManager.getActiveThemeSetting('siteSettings');
                 
                 if (!siteSettings) {
                     return;
@@ -67,7 +86,7 @@ async function createViewRenderer(configuration, app, themeManager, settingsMana
         
         //Expose certain setting service functions to the template
         viewRenderer.setViewInjection({
-            getActiveThemeSetting: settingsManager.getActiveThemeSetting,
+            getActiveThemeSetting: themeManager.getActiveThemeSetting,
             getSiteSetting: settingsManager.getSiteSetting
         });
         
