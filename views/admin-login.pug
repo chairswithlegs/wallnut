@@ -1,24 +1,19 @@
-div(style='max-width: 540px; margin: auto;')
-    h1 Login
+h2.text-center Admin Login
 
-    form
-        .form-group
-            label(for='login-username') Title
-            input.form-control(type='text', id='login-username', placeholder="Username")
+form
+    .form-group
+        label(for='login-username') Username
+        input.form-control(type='text', id='login-username', placeholder="Username")
 
-        .form-group
-            label(for='login-password') Content
-            input.form-control(type='password', id='login-password', placeholder="Password")
+    .form-group
+        label(for='login-password') Password
+        input.form-control(type='password', id='login-password', placeholder="Password")
 
-        button.btn.btn-primary(type='button', id='login-button') Submit
+    button.btn.btn-primary(type='submit', id='login-button') Submit
 
 script
     include authentication-manager.js
 script.
-    if (authenticationManager.isAuthenticated()) {
-        location.href='/admin';
-    }
-
     var username = document.getElementById('login-username');
     var password = document.getElementById('login-password');
 

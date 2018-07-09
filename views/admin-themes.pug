@@ -1,4 +1,4 @@
-h1 Admin Themes
+h2.text-center Select A Theme Below
 
 ul.list-group         
     each theme in themeList
@@ -31,15 +31,21 @@ script.
         req.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
         req.send(JSON.stringify({ activatedTheme: themeName }));
         req.addEventListener('load', function() {
-            console.log(req.response);
-
             highlightTheme(link);
         });
     }
 
     function highlightTheme(link) {
-        document.getElementsByClassName('active')[0].classList.remove('active');
-        document.getElementsByClassName('invisible')[0].classList.remove('invisible');
+        var oldThemeEl = document.getElementsByClassName('active')[0];
+        var oldLinkEl = document.getElementsByClassName('invisible')[0];
+
+        if (oldThemeEl) {
+            oldThemeEl.classList.remove('active');
+        }
+
+        if (oldLinkEl) {
+            oldLinkEl.classList.remove('invisible');
+        }
 
         link.parentElement.classList.add('active');
         link.classList.add('invisible');

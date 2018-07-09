@@ -1,12 +1,13 @@
 if posts
     each post in posts
         if post.author
-            h3 Written by #{post.author}
+            h4.text-center Written by #{post.author}
         
         a(href=`blog/${post._id}`)
-            h2= post.title
+            h2.text-center.text-dark= post.title
 
         - if(post.content.length > 100) post.content = post.content.slice(0, 100);
-        p= post.content
+        p= post.content + '... '
+            a(href=`blog/${post._id}`) Read more.
 else
-    h2 No posts to display.
+    h2.text-center No posts to display.
