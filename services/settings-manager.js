@@ -4,11 +4,11 @@ const path = require('path');
 const Setting = require('../models/setting');
 
 function SettingsManager() {
-    let siteSettingsCache;
+    let siteSettingsCache = {}
     
     //Getter for the site setting cache
     this.getSiteSetting = function(setting) {
-        return siteSettingsCache[setting]
+        return siteSettingsCache[setting];
     }
     
     //Syncs the cache with the database
@@ -19,13 +19,15 @@ function SettingsManager() {
                     reject(error);
                 } else {
                     siteSettingsCache = {};
-                    
-                    settings.forEach((setting) => {
-                        siteSettingsCache[setting.key] = setting.value;
-                    });
-                    
+
+                    if (settings) {
+                        settings.forEach((setting) => {
+                            siteSettingsCache[setting.key] = setting.value;
+                        });
+                    }
+
                     Object.freeze(siteSettingsCache);
-                    
+
                     resolve(siteSettingsCache);
                 }
             });
