@@ -34,7 +34,7 @@ module.exports = async function configureServices(app) {
 
 async function createSettingsManager(themeManager) {
     try {
-        settingsManager = new SettingsManager(themeManager);
+        settingsManager = new SettingsManager();
         
         themeManager.on('theme-loaded', async() => {
             try { 

@@ -3,10 +3,8 @@
 const path = require('path');
 const Setting = require('../models/setting');
 
-function SettingsManager(themeManager) {
+function SettingsManager() {
     let siteSettingsCache;
-    
-    this.themeManager = themeManager;
     
     //Getter for the site setting cache
     this.getSiteSetting = function(setting) {
