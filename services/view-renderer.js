@@ -16,14 +16,14 @@ function ViewRenderer(app, viewExtension) {
     this.viewExtension = viewExtension;
  
     this.getViewInjection = function() {
-        return this.viewInjection;
+        return viewInjection;
     }
 
     this.setViewInjection = function(injection) {
         if (typeof(injection) != 'object') {
             throw new Error('View injection must be an object');
         } else {
-            this.viewInjection = injection;
+            viewInjection = injection;
         }
     }
 
