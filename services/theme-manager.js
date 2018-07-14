@@ -37,12 +37,14 @@ function ThemeManager(themesDirectory) {
         });
         
         //Send an alert if we are transitioning to a new theme
+        //This is useful is we need to do any theme cleanup
         if (activeTheme && activeTheme.name !== themeName) {
             this.emit('new-theme-activated');
         }
         
-        //Update the internal theme ref and update subscribers
+        //Send an alert that a theme has been activated, useful for theme setup
         activeTheme = new ThemeSnapshot(themeName, themeConfig);
+
         this.emit('theme-loaded');
         
         if (process.env.NODE_ENV === 'development') {
@@ -51,6 +53,10 @@ function ThemeManager(themesDirectory) {
     }
     
     this.getActiveTheme = function() {
+        if (!activeTheme) {
+            return undefined;
+        }
+
         return activeTheme.name;
     }
 
