@@ -1,5 +1,4 @@
 const proxyquire = require('proxyquire');
-const jasmine = require('jasmine');
 
 const mockPath = {};
 const mockSetting = {};
