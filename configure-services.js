@@ -1,10 +1,9 @@
-//This file configure the application service and exports them in the form of a service container
+//This file configures the application service and exports them in the form of a service container
 
 const ThemeManager = require('./services/theme-manager');
 const SettingsManager = require('./services/settings-manager');
 const ViewRenderer = require('./services/view-renderer');
 const configuration = require('./wallnut.json');
-
 
 //Creates the services and returns the service container
 module.exports = async function configureServices(app) {

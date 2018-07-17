@@ -1,4 +1,4 @@
-//This file configures Passport, this middleware used to managing site authentication
+//This file configures Passport, the middleware used to manage site authentication
 
 const configuration = require('./wallnut.json');
 const passportJwt = require('passport-jwt');

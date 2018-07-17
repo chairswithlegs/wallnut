@@ -1,4 +1,4 @@
-//This service is used to manage theme and site settings in wallnut
+//This service is used to manage site settings in wallnut
 
 const path = require('path');
 const Setting = require('../models/setting');
