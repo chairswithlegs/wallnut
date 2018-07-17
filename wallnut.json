@@ -2,7 +2,7 @@
     "themesDirectory": "./themes",
     "coreViews": "./views",
     "baseUrl": "localhost:3000",
-    "modelsDirectory": "./models",
+    "port": "3000",
     "seedSettings": {
         "Site Title": "Your Site",
         "Site Copyright": "Your Copyright Here"

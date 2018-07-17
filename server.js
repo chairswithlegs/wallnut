@@ -3,6 +3,7 @@
 //Set the environment variables
 require('dotenv').config();
 
+const configuration = require('./wallnut.json');
 const configureServices = require('./configure-services');
 const configureAuth = require('./configure-auth');
 const express = require('express');
@@ -22,7 +23,7 @@ const passport = require('passport');
         serviceContainer = await configureServices(app);
         configureMiddleware(app, serviceContainer);
 
-        const server = app.listen(process.env.PORT || 3000, () => {
+        const server = app.listen(configuration.port || process.env.PORT || 3000, () => {
             console.log(`Server listening on port ${server.address().port}`);
         });
     } catch(error) {
