@@ -1,1 +1,12 @@
 h2.text-center Admin Dashboard
+
+p Welcome back to your Wallnut site. If you would like to learn more about Wallnut, click 
+    a(href='https://github.com/chairswithlegs/wallnut') here
+    |  to checkout the docs.
+
+
+- var activeTheme = getSiteSetting('Active Theme')
+if !activeTheme
+    p.text-secondary It looks like you haven't activated a theme yet, click 
+        a(href='admin/themes') here
+        |  to select one now.
