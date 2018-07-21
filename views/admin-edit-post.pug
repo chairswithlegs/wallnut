@@ -14,6 +14,7 @@ form
     input(type='hidden', id='form-id', value=post._id || "")
 
     button.btn.btn-primary(type='submit', id='form-submit-button') Save
+    button.btn.btn-danger.float-right(type='button', id='form-delete-button') Delete
     span.d-none.pl-2(id='success-alert') Post successfully saved.
     span.d-none.text-danger.pl-2(id='error-alert') Uh-oh, something went wrong.
 

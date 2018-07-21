@@ -2,6 +2,10 @@ document
 .getElementById('form-submit-button')
 .addEventListener('click', submitForm);
 
+document
+.getElementById('form-delete-button')
+.addEventListener('click', deletePost);
+
 function submitForm(e) {
     e.preventDefault();
     
@@ -38,6 +42,21 @@ function postForm(formData) {
         if (req.status === 200) {
             submitAlert(true);
             $('#form-id').val(JSON.parse(req.response)._id);
+        } else {
+            submitAlert(false);
+        }
+    });
+}
+
+function deletePost(formData) {
+    var id = $('#form-id').val()
+    console.log('fired');
+    var req = new XMLHttpRequest();
+    req.open('DELETE', './' + id);
+    req.send();
+    req.addEventListener('load', function() {
+        if (req.status === 200) {
+            document.location.href = '/admin/posts';
         } else {
             submitAlert(false);
         }

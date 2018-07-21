@@ -199,6 +199,17 @@ module.exports = function(serviceContainer) {
             next(error);
         }
     });
-    
+
+    //Delete Methods
+    router.delete(('/posts/:id'), async(req, res) => {
+        Post.deleteOne({ _id: req.params.id }, (error) => {
+            if (error) {
+                res.status(500).send('Server error.');
+            } else {
+                res.send('Post deleted successfully.');
+            }
+        });
+    });
+
     return router;
 }
