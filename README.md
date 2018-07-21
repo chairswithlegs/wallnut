@@ -5,15 +5,15 @@
 
 ## Table Of Contents
 
-1. [Getting Started](#getting-started)
-	1.1 [Installing](#installing)
-	1.2 [Configuration](#configuration)
-	1.3 [Running Wallnut](#running-wallnut)
-2. [Theming](#theming)
-	2.1 [Creating A Theme](#creating-a-theme)
-	2.2 [Writing Templates In Pug](#writing-templates-in-pug)
-	2.3 [Template Context](#template-context)
-3. [License](#license)
+1. [Getting Started](#getting-started)  
+	1.1 [Installing](#installing)  
+	1.2 [Configuration](#configuration)  
+	1.3 [Running Wallnut](#running-wallnut)  
+2. [Theming](#theming)  
+	2.1 [Creating A Theme](#creating-a-theme)  
+	2.2 [Writing Templates In Pug](#writing-templates-in-pug)  
+	2.3 [Template Context](#template-context)  
+3. [License](#license)  
 
 
 ## Getting Started
