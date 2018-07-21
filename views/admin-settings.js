@@ -2,7 +2,9 @@ document
 .getElementById('form-submit-button')
 .addEventListener('click', submitForm);
 
-function submitForm() {
+function submitForm(e) {
+    e.preventDefault();
+
     var inputs = document.getElementsByTagName('input')
     var postBody = {};
     

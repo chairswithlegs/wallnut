@@ -2,13 +2,15 @@ document
 .getElementById('form-submit-button')
 .addEventListener('click', submitForm);
 
-function submitForm() {
+function submitForm(e) {
+    e.preventDefault();
+    
     var formData = {
         title: $('#form-title').val(),
         content: $('#form-content').val(),
         id: $('#form-id').val()
     }
-
+    
     //If we have no ID, then this is treated as a new post.
     if (formData.id === "") {
         postForm(formData);
@@ -33,9 +35,12 @@ function postForm(formData) {
     req.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
     req.send(JSON.stringify(formData));
     req.addEventListener('load', function() {
-        if (req.status === 200)
-        submitAlert(true);
-        $('#form-id').val(JSON.parse(req.response)._id);
+        if (req.status === 200) {
+            submitAlert(true);
+            $('#form-id').val(JSON.parse(req.response)._id);
+        } else {
+            submitAlert(false);
+        }
     });
 }
 

@@ -1,13 +1,11 @@
 nav.navbar.navbar-dark.bg-dark.navbar-expand-md
-    a.navbar-brand(href='/')= getSiteSetting('Site Title')
+    a.navbar-brand(href='/admin')= getSiteSetting('Site Title')
 
     button.navbar-toggler(type="button", data-toggle="collapse", data-target="#nav", aria-controls="navbarSupportedContent", aria-expanded="false", aria-label="Toggle navigation")
         span.navbar-toggler-icon
 
     div.collapse.navbar-collapse.justify-content-end#nav
         ul.nav.navbar-nav
-            li.nav-item.p-2
-                a.nav-link(href='/admin') Dashboard
             li.nav-item.p-2
                 a.nav-link(href='/admin/themes') Themes
             li.nav-item.p-2
@@ -20,7 +18,8 @@ nav.navbar.navbar-dark.bg-dark.navbar-expand-md
 script
     include authentication-manager.js
 script.
-    document.getElementById('logout-button').addEventListener('click', function() {
-        authenticationManager.logout();
+    document.getElementById('logout-button').addEventListener('click', function(e) {
+        e.preventDefault();
+        authenticationManager.logout('/');
     });
     
