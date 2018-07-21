@@ -57,24 +57,4 @@ module.exports = function configureAuth(app) {
             }
         });
     }));
-
-    //Create the default admin account if it doesn't already exist
-    User.findOne({ username: configuration.adminCredentials.username }, (error, user) => {
-        if (error) {
-            throw new Error(error);
-        } else if (!user) {
-            const admin = new User({
-                username: configuration.adminCredentials.username,
-                password: configuration.adminCredentials.password
-            });
-
-            admin.save((error) => {
-                if (error) {
-                    throw new Error(error);
-                } else {
-                    console.log('Created default admin login in database.');
-                }
-            })
-        }
-    });
 }

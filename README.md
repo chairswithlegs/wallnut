@@ -39,13 +39,6 @@ Wallnut will also require an active MongoDB database; you can create a database 
 
 ### Configuration
 
-Open *Wallnut.json* and make the following changes:
-
-	"adminCredentials": {
-        "username": "YOUR USERNAME",
-        "password": "YOUR PASSWORD"
-    }
-
 If this is a production environment, or port 3000 is already in use, you may need to change the following settings as well:
 
 	"baseUrl": "YOUR SITE DOMAIN",
@@ -56,8 +49,11 @@ Several environment variables will need to be set as well. Wallnut makes use of 
 	CONNECTION_STRING=THE CONNECTION STRING FOR YOUR DATABASE
 	JWT_KEY=YOUR SECRET KEY
 
-
 You may also want to set *NODE_ENV* to *development* for enhanced error logging and application life-cycle alerts.
+
+Finally, you will need to create a site admin account. You can do this by running executing the following command:
+
+	npm run create-user -- --username <USERNAME> --password <PASSWORD>
 
 
 ### Running Wallnut

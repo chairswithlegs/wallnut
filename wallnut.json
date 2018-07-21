@@ -6,9 +6,5 @@
     "seedSettings": {
         "Site Title": "Your Site",
         "Site Copyright": "Your Copyright Here"
-    },
-    "adminCredentials": {
-        "username": "USERNAME",
-        "password": "PASSWORD"
     }
 }
