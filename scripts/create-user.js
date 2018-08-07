@@ -1,7 +1,7 @@
 //This file contains script functions for Wallnut
 
 require('dotenv').config();
-const yargs = require('yargs');//.demand(['username', 'password']);
+const yargs = require('yargs').demand(['username', 'password']);
 const mongoose = require('mongoose');
 const User = require('../models/user');
 
