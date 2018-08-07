@@ -188,10 +188,14 @@ module.exports = function(serviceContainer) {
         try {
             const activatedTheme = req.body.activatedTheme;
 
-            if (!activatedTheme) {
+            if (activatedTheme === undefined) {
                 res.status(400).send('Request must be in the form of { activatedTheme: <THEME NAME> }.');
             } else {
-                await serviceContainer.themeManager.setActiveTheme(activatedTheme);
+                if (activatedTheme === '') {
+                    await serviceContainer.themeManager.deactivateTheme();
+                } else {
+                    await serviceContainer.themeManager.setActiveTheme(activatedTheme);
+                }
                 res.json({ activatedTheme: activatedTheme });
             }
         }

@@ -41,6 +41,11 @@ function ViewRenderer(app, viewExtension) {
             fs.readdir((directory), (error, files) => {
                 if (error) { reject(error) }
                 
+                if (!files) {
+                    resolve(true);
+                    return;
+                }
+
                 files.forEach((file) => {
                     splitFile = file.split('.');
 

@@ -97,7 +97,10 @@ async function createViewRenderer(configuration, app, themeManager, settingsMana
                 await viewRenderer.populateViewMap(configuration.coreViews);
                 
                 //Update the view map with the new theme's views
-                viewRenderer.populateViewMap(themeManager.getActiveThemeDirectory());
+                const themeViews = themeManager.getActiveThemeDirectory();
+                if (themeViews) {
+                    viewRenderer.populateViewMap(themeManager.getActiveThemeDirectory());
+                }
             } catch(error) {
                 console.log(`Failed to update view renderer to new theme: ${error}`);
             }

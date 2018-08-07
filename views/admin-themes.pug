@@ -1,6 +1,15 @@
 h2.text-center Select A Theme Below
 
-ul.list-group         
+ul.list-group
+    if theme === activeTheme
+        li.list-group-item.active
+            span Core Theme
+            a(href='#', data-theme='').text-primary.float-right.activation-link.invisible Activate
+    else
+        li.list-group-item
+            span Core Theme
+            a(href='#', data-theme='').text-primary.float-right.activation-link Activate
+
     each theme in themeList
         if theme === activeTheme
             li.list-group-item.active

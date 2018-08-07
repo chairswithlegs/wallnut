@@ -51,6 +51,16 @@ function ThemeManager(themesDirectory) {
             console.log(`Theme activated: ${this.getActiveTheme()}`);
         }
     }
+
+    this.deactivateTheme = function() {
+        this.emit('new-theme-activated');
+        activeTheme = undefined
+        this.emit('theme-loaded');
+
+        if (process.env.NODE_ENV === 'development') {
+            console.log('Theme deactivated.');
+        }
+    }
     
     this.getActiveTheme = function() {
         if (!activeTheme) {
@@ -64,7 +74,7 @@ function ThemeManager(themesDirectory) {
         if (activeTheme) {
             return activeTheme.config[setting];
         } else {
-            if (NODE_ENV==='development') {
+            if (process.env.NODE_ENV==='development') {
                 console.log(`No active theme set. Failed to get setting: ${setting}.`);
             }
 
@@ -122,7 +132,11 @@ ThemeManager.prototype.themeExists = function(themeName) {
 
 //Return the path of the current theme
 ThemeManager.prototype.getActiveThemeDirectory = function() {
-    return `${this.themesDirectory}/${this.getActiveTheme()}`;
+    if (this.getActiveTheme()) {
+        return `${this.themesDirectory}/${this.getActiveTheme()}`;
+    } else {
+        return undefined;
+    }
 };
 
 module.exports = ThemeManager;
